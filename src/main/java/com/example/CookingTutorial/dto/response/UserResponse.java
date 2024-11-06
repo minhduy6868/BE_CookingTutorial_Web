@@ -1,6 +1,6 @@
-package com.example.CookingTutorial.entity;
+package com.example.CookingTutorial.dto.response;
 
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,20 +12,14 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+public class UserResponse {
     String id;
     String email;
-    String password;
     String fullName;
     String avatar;
     String description;
     String phoneNumber;
     String address;
     Set<String> roles;
-
-    @OneToMany(mappedBy = "user")
-    List<Post> Post;
+    List<com.example.CookingTutorial.entity.Post> Post;
 }
