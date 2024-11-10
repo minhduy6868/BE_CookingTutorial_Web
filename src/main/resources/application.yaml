@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3306/cookingTutorialData"
+    username: root
+    password: root
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: datcute279@gmail.com
+    password: lyexpuxldyjdihhr
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+jwt:
+  signerKey: "qV6MwxsMykj6Zou1ovsapONCduni7+NQ4I8YTOyITaaED/2CXu4V2XnJ7eiQInSS"
