@@ -1,5 +1,6 @@
 package com.example.CookingTutorial.controller;
 
+import com.example.CookingTutorial.dto.request.DKRequest;
 import com.example.CookingTutorial.dto.response.Response;
 import com.example.CookingTutorial.dto.request.UserCreateRequest;
 import com.example.CookingTutorial.service.UserService;
@@ -65,6 +66,15 @@ public class UserController {
                 .status(HttpStatus.OK.value())
                 .message("Get users successfull")
                 .data(userService.getAllUser())
+                .build();
+    }
+
+    @PostMapping("/DKUser")
+    Response<?> DKUser(@RequestBody DKRequest request){
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Register successfull!")
+                .data(userService.DKUser(request))
                 .build();
     }
 

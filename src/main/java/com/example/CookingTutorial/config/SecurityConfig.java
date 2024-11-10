@@ -16,26 +16,31 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {"/user","/login","/introspect"};
+    private final String[] PUBLIC_ENDPOINTS = {"/user","/login","/introspect","user/DKUser"};
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { //config cái cấp quyền
+
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET,"/getAllUser").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/user/getAllUser").permitAll()
                         .anyRequest().authenticated()
         );
 
-        // xác thực quyền, cấu hình cái role
+         // xác thực quyền, cấu hình cái role
         http.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))); // để decode lại cái token
@@ -47,6 +52,9 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+
+
     JwtAuthenticationConverter jwtAuthenticationConverter(){ // custom Role
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
