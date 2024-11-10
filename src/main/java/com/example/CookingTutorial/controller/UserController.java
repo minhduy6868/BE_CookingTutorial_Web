@@ -49,6 +49,7 @@ public class UserController {
                 .build();
     }
 
+
     @GetMapping("/myInfo") // show ra info chính mình
     Response<?> getMyInfo(){
         return Response.builder()
@@ -58,4 +59,17 @@ public class UserController {
                 .build();
     }
 
+    @GetMapping("/getAllUser")
+    Response<?> getAllUser(){
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get users successfull")
+                .data(userService.getAllUser())
+                .build();
+    }
+
+//    @PostMapping
+//    Response<?> forgotPass(){
+//        return Response.builder().build();
+//    }
 }

@@ -31,6 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { //config cái cấp quyền
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET,"/getAllUser").permitAll()
                         .anyRequest().authenticated()
         );
 
@@ -38,6 +39,8 @@ public class SecurityConfig {
         http.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))); // để decode lại cái token
+
+
 
         http.csrf(AbstractHttpConfigurer::disable);
 //        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable()); 2 cái giống nhau

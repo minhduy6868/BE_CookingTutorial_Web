@@ -5,8 +5,14 @@ import com.example.CookingTutorial.dto.response.UserResponse;
 import com.example.CookingTutorial.entity.User;
 import com.example.CookingTutorial.enums.Role;
 import com.example.CookingTutorial.reponsitory.UserRepository;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 
 @Service
@@ -24,7 +31,20 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JavaMailSender mailSender;
+
+
     public UserResponse createUser(UserCreateRequest request){
+//        Random r = new Random();
+//        int ramdomNumber = r.nextInt(1000,9999);
+//        sendEmail(request.getEmail(),"Mã xác thực", "Mã xác thực của bạn là: " + ramdomNumber);
+//
+//        if(ramdomNumber){
+//
+//        }
+//
+//        return ;
         User user = new User();
 
         user.setAddress(request.getAddress());
@@ -38,6 +58,7 @@ public class UserService {
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
         user.setRoles(roles);
+
         userRepository.save(user);
         return UserResponse.builder()
                 .id(user.getId())
@@ -51,7 +72,16 @@ public class UserService {
                 .Post(user.getPost())
                 .build();
     }
+    public
 
+    void sendEmail(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+
+        mailSender.send(message);
+    }
     public UserResponse getMyInfo(){
         var context = SecurityContextHolder.getContext();
         String name=context.getAuthentication().getName();
@@ -72,6 +102,10 @@ public class UserService {
     }
     @PreAuthorize("hasRole('ADMIN')") // phải cso quyền mới được vào
     public List<User> getUsers(){
+        log.info("In method getUsers!");
+        return userRepository.findAll();
+    }
+    public List<User> getAllUser(){
         log.info("In method getUsers!");
         return userRepository.findAll();
     }
