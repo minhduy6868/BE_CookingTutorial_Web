@@ -171,6 +171,7 @@ public class UserService {
         log.info("In method getUsers!");
         return userRepository.findAll();
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUser(){
         log.info("In method getUsers!");
         return userRepository.findAll();
