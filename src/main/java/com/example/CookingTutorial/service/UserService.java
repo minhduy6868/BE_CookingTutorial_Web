@@ -1,6 +1,8 @@
 package com.example.CookingTutorial.service;
 
+import com.example.CookingTutorial.dto.request.DKRequest;
 import com.example.CookingTutorial.dto.request.UserCreateRequest;
+import com.example.CookingTutorial.dto.response.Response;
 import com.example.CookingTutorial.dto.response.UserResponse;
 import com.example.CookingTutorial.entity.User;
 import com.example.CookingTutorial.enums.Role;
@@ -18,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +37,15 @@ public class UserService {
     @Autowired
     private JavaMailSender mailSender;
 
+    public String DKUser(DKRequest request){
+        User user =new User();
+        user.setEmail(request.getEmail());
+        user.setFullName(request.getFullName());
+        user.setPassword(new BCryptPasswordEncoder(10).encode(request.getPassword()));
 
+        userRepository.save(user);
+        return "Register successfull!";
+    }
     public UserResponse createUser(UserCreateRequest request){
 //        Random r = new Random();
 //        int ramdomNumber = r.nextInt(1000,9999);
@@ -115,4 +126,8 @@ public class UserService {
         log.info("In method get user by id!");
         return userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found!"));
     }
+
+
+
+
 }

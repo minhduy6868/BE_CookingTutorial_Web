@@ -21,7 +21,7 @@ import java.text.ParseException;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin
 public class AuthenticationController {
     AuthenticationService authenticationService;
     @PostMapping("/login") // tạo token khi đăng nhập
