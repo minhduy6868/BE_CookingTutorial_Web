@@ -27,15 +27,11 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-<<<<<<< HEAD
-    private final String[] PUBLIC_ENDPOINTS = {"/user", "/login", "/introspect", "/user/DKUser","/cloudinary/upload"};
-=======
     private final String[] PUBLIC_ENDPOINTS = {"/user", "/login", "/introspect", "/user/DKUser","/user/forgotPassword"};
 
-    private final String[] PUT_ENDPOINTS = {"/user/updatePass","/user//updateUser","/user/admin/edit/{userId}"};
+    private final String[] PUT_ENDPOINTS = {"/user/updatePass","/user/updateUser","/user/admin/edit/{userId}"};
 
     private final String[] DELETE_ENDPOINTS = {"/user/admin/delete/{userId}","/user/admin/deletePost/{postId}"};
->>>>>>> 3f7efa78738a83d04f90a4a27eb960454be9a049
 
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
