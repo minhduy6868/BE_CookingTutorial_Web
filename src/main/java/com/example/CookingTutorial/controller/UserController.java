@@ -1,8 +1,10 @@
 package com.example.CookingTutorial.controller;
 
 import com.example.CookingTutorial.dto.request.DKRequest;
-import com.example.CookingTutorial.dto.response.Response;
 import com.example.CookingTutorial.dto.request.UserCreateRequest;
+//import com.example.CookingTutorial.dto.request.UserUpdateRequest; // DTO cho cập nhật thông tin người dùng
+//import com.example.CookingTutorial.dto.request.ForgotPasswordRequest; // DTO cho quên mật khẩu
+import com.example.CookingTutorial.dto.response.Response;
 import com.example.CookingTutorial.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,73 +17,197 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @CrossOrigin
 public class UserController {
+
     @Autowired
     private UserService userService;
 
-    @PostMapping // tạo mới 1 user
-    Response<?> createUser(@RequestBody UserCreateRequest request){
+    /// For User
+
+    @PostMapping // Tạo mới 1 user
+    public Response<?> createUser(@RequestBody UserCreateRequest request) {
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Create user successfull")
+                .message("Create user successfully")
                 .data(userService.createUser(request))
                 .build();
     }
 
-    @GetMapping // show ra hết tất cả các user
-    Response<?> getUsers(){
+    @GetMapping // Lấy tất cả người dùng
+    public Response<?> getUsers() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
         log.info("Email: " + authentication.getName());
-
         authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
-
 
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Get users successfull")
+                .message("Get users successfully")
                 .data(userService.getUsers())
                 .build();
     }
-    @GetMapping("/{userId}") // show ra user
-    Response<?> getUser(@PathVariable("userId") String userId){
+
+    @GetMapping("/{userId}") // Lấy thông tin người dùng theo ID
+    public Response<?> getUser(@PathVariable("userId") String userId) {
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Get user by id successfull")
+                .message("Get user by id successfully")
                 .data(userService.getUser(userId))
                 .build();
     }
 
-
-    @GetMapping("/myInfo") // show ra info chính mình
-    Response<?> getMyInfo(){
+    @GetMapping("/myInfo") // Lấy thông tin của người dùng hiện tại
+    public Response<?> getMyInfo() {
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Get my info successfull!")
+                .message("Get my info successfully!")
                 .data(userService.getMyInfo())
                 .build();
     }
 
-    @GetMapping("/getAllUser")
-    Response<?> getAllUser(){
-        return Response.builder()
-                .status(HttpStatus.OK.value())
-                .message("Get users successfull")
-                .data(userService.getAllUser())
-                .build();
-    }
-
-
+    // Đăng ký tài khoản
     @PostMapping("/DKUser")
-    Response<?> DKUser(@RequestBody DKRequest request){
+    public Response<?> DKUser(@RequestBody DKRequest request) {
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Register successfull!")
+                .message("Register successfully!")
                 .data(userService.DKUser(request))
                 .build();
     }
 
-//    @PostMapping
-//    Response<?> forgotPass(){
-//        return Response.builder().build();
-//    }
+    /*
+    // Quên mật khẩu
+    @PostMapping("/forgotPassword")
+    public Response<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        boolean result = userService.forgotPassword(request);
+        if (result) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Password reset email sent successfully!")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Error sending password reset email. Please try again.")
+                    .build();
+        }
+    }
+
+    // Cập nhật thông tin tài khoản
+    @PutMapping("/update")
+    public Response<?> updateUser(@RequestBody UserUpdateRequest request) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("User updated successfully!")
+                .data(userService.updateUser(email, request))
+                .build();
+    }
+
+    // Cập nhật avatar
+    @PutMapping("/updateAvatar")
+    public Response<?> updateAvatar(@RequestBody String avatarUrl) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Avatar updated successfully!")
+                .data(userService.updateAvatar(email, avatarUrl))
+                .build();
+    }
+
+    */
+
+    // Xóa tài khoản của chính mình
+    @DeleteMapping("/deleteAccount")
+    public Response<?> deleteAccount() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        boolean isDeleted = userService.deleteAccountByEmail(email);
+        if (isDeleted) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Your account has been deleted successfully.")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Failed to delete your account. Please try again.")
+                    .build();
+        }
+    }
+
+    /// For Admin
+
+    // Admin có thể xóa 1 hoặc nhiều user, chỉ cần truyền ID vào
+   /* @DeleteMapping("/admin/delete/{userId}")
+    public Response<?> deleteUser(@PathVariable("userId") String userId) {
+        boolean isDeleted = userService.deleteUser(userId);
+        if (isDeleted) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("User deleted successfully.")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Failed to delete user.")
+                    .build();
+        }
+    }
+    */
+
+    // Admin có thể chỉnh sửa thông tin của 1 user
+    /*@PutMapping("/admin/edit/{userId}")
+    public Response<?> updateUserByAdmin(@PathVariable("userId") String userId, @RequestBody UserUpdateRequest request) {
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("User information updated successfully.")
+                .data(userService.updateUserByAdmin(userId, request))
+                .build();
+    }
+
+     */
+
+    // Admin có thể xóa tất cả các bài viết, chỉ cần truyền ID bài viết vào
+    /*@DeleteMapping("/admin/deletePost/{postId}")
+    public Response<?> deletePost(@PathVariable("postId") String postId) {
+        boolean isDeleted = userService.deletePost(postId);
+        if (isDeleted) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Post deleted successfully.")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Failed to delete post.")
+                    .build();
+        }
+    }
+
+     */
+
+    // Admin lấy số lượng User và bài viết
+    /*@GetMapping("/admin/count")
+    public Response<?> getAdminStats() {
+        var stats = userService.getAdminStats();
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Admin statistics retrieved successfully.")
+                .data(stats)
+                .build();
+    }
+
+     */
+
+    // Lấy tất cả người dùng (cho admin)
+    @GetMapping("/getAllUser")
+    public Response<?> getAllUser() {
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all users successfully.")
+                .data(userService.getAllUser())
+                .build();
+    }
 }

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -36,6 +37,9 @@ public class UserService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+
+    //For User
 
     public String DKUser(DKRequest request){
         User user =new User();
@@ -111,6 +115,31 @@ public class UserService {
                 .Post(user.getPost())
                 .build();
     }
+
+    @PostAuthorize("returnObject.email == authentication.name") // kiểm tra đúng email kia mới cho kiểm tra
+    public User getUser(String userId){
+        log.info("In method get user by id!");
+        return userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found!"));
+    }
+
+    // Xóa tài khoản của người dùng theo email
+    public boolean deleteAccountByEmail(String email) {
+        // Tìm người dùng theo email
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            // Xóa người dùng
+            User user = userOpt.get();
+            userRepository.deleteById(user.getId());
+            log.info("User with email {} deleted successfully.", email);
+            return true;  // Thành công
+        }
+        log.warn("User with email {} not found for deletion.", email);
+        return false;  // Không tìm thấy người dùng
+    }
+
+
+
+    //For Admin
     @PreAuthorize("hasRole('ADMIN')") // phải cso quyền mới được vào
     public List<User> getUsers(){
         log.info("In method getUsers!");
@@ -120,13 +149,6 @@ public class UserService {
         log.info("In method getUsers!");
         return userRepository.findAll();
     }
-
-    @PostAuthorize("returnObject.email == authentication.name") // kiểm tra đúng email kia mới cho kiểm tra
-    public User getUser(String userId){
-        log.info("In method get user by id!");
-        return userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found!"));
-    }
-
 
 
 

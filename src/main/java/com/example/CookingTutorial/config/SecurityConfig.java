@@ -37,7 +37,7 @@ public class SecurityConfig {
         // Cấu hình quyền truy cập cho các endpoint
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user/getAllUser").permitAll()
+                        //.requestMatchers(HttpMethod.GET, "/user/getAllUser").permitAll()
                         .anyRequest().authenticated()
         );
 
