@@ -17,4 +17,12 @@ public class PostService {
         List<Post> list=postReponsitory.findAll();
         return list.size();
     }
+
+    public boolean deletePost(String postId){
+        if(postReponsitory.findById(postId).isEmpty()){
+            return false;
+        }
+        postReponsitory.deleteById(postId);
+        return true;
+    }
 }

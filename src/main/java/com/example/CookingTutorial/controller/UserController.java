@@ -1,11 +1,8 @@
 package com.example.CookingTutorial.controller;
 
-import com.example.CookingTutorial.dto.request.ChangePasswordRequest;
-import com.example.CookingTutorial.dto.request.DKRequest;
-import com.example.CookingTutorial.dto.request.UserCreateRequest;
+import com.example.CookingTutorial.dto.request.*;
 //import com.example.CookingTutorial.dto.request.UserUpdateRequest; // DTO cho cập nhật thông tin người dùng
 //import com.example.CookingTutorial.dto.request.ForgotPasswordRequest; // DTO cho quên mật khẩu
-import com.example.CookingTutorial.dto.request.UserForgotPassRequest;
 import com.example.CookingTutorial.dto.response.Response;
 import com.example.CookingTutorial.service.PostService;
 import com.example.CookingTutorial.service.UserService;
@@ -108,13 +105,12 @@ public class UserController {
     }
 
 
-    @PutMapping("/update")
+    @PutMapping("/updatePass")
     public Response<?> updateNewPass(@RequestBody ChangePasswordRequest request){
-        if (true) {
+        if (userService.changePass(request)==1) {
             return Response.builder()
                     .status(HttpStatus.OK.value())
                     .message("Change password of email " + request.getEmail()+ " is successfully!")
-                    .data("1")
                     .build();
         } else {
             return Response.builder()
@@ -125,9 +121,9 @@ public class UserController {
 
     }
 
-/*
+
     // Cập nhật thông tin tài khoản
-    @PutMapping("/update")
+    @PutMapping("/updateUser")
     public Response<?> updateUser(@RequestBody UserUpdateRequest request) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -138,6 +134,8 @@ public class UserController {
                 .build();
     }
 
+
+/*
     // Cập nhật avatar
     @PutMapping("/updateAvatar")
     public Response<?> updateAvatar(@RequestBody String avatarUrl) {
@@ -174,7 +172,7 @@ public class UserController {
     /// For Admin
 
     // Admin có thể xóa 1 hoặc nhiều user, chỉ cần truyền ID vào
-   /* @DeleteMapping("/admin/delete/{userId}")
+   @DeleteMapping("/admin/delete/{userId}")
     public Response<?> deleteUser(@PathVariable("userId") String userId) {
         boolean isDeleted = userService.deleteUser(userId);
         if (isDeleted) {
@@ -189,11 +187,11 @@ public class UserController {
                     .build();
         }
     }
-    */
+
 
     // Admin có thể chỉnh sửa thông tin của 1 user
-    /*@PutMapping("/admin/edit/{userId}")
-    public Response<?> updateUserByAdmin(@PathVariable("userId") String userId, @RequestBody UserUpdateRequest request) {
+    @PutMapping("/admin/edit/{userId}")
+    public Response<?> updateUserByAdmin(@PathVariable("userId") String userId, @RequestBody AdminUpdateUserRequest request) {
         return Response.builder()
                 .status(HttpStatus.OK.value())
                 .message("User information updated successfully.")
@@ -201,12 +199,12 @@ public class UserController {
                 .build();
     }
 
-     */
+
 
     // Admin có thể xóa tất cả các bài viết, chỉ cần truyền ID bài viết vào
-    /*@DeleteMapping("/admin/deletePost/{postId}")
+    @DeleteMapping("/admin/deletePost/{postId}")
     public Response<?> deletePost(@PathVariable("postId") String postId) {
-        boolean isDeleted = userService.deletePost(postId);
+        boolean isDeleted = postService.deletePost(postId);
         if (isDeleted) {
             return Response.builder()
                     .status(HttpStatus.OK.value())
@@ -220,9 +218,23 @@ public class UserController {
         }
     }
 
-     */
+
 
     // Admin lấy số lượng User và bài viết
+    @GetMapping("/admin/count")
+    public Response<?> numberOfUser(){
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("user", userService.numberOfUser());
+        data.put("post", postService.numberOfPost());
+
+
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Successfully!")
+                .data(data)
+                .build();
+    }
     /*@GetMapping("/admin/count")
     public Response<?> getAdminStats() {
         var stats = userService.getAdminStats();
@@ -245,19 +257,6 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/numberOfUserAndPost")
-    public Response<?> numberOfUser(){
-        Map<String, Object> data = new HashMap<>();
 
-        data.put("user", userService.numberOfUser());
-        data.put("post", postService.numberOfPost());
-
-
-        return Response.builder()
-                .status(HttpStatus.OK.value())
-                .message("Successfully!")
-                .data(data)
-                .build();
-    }
 
 }
