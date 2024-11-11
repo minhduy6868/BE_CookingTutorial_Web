@@ -27,7 +27,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS = {"/user", "/login", "/introspect", "/user/DKUser"};
+    private final String[] PUBLIC_ENDPOINTS = {"/user", "/login", "/introspect", "/user/DKUser","/cloudinary/upload"};
 
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
