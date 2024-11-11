@@ -27,7 +27,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS = {"/user", "/login", "/introspect", "/user/DKUser"};
+    private final String[] PUBLIC_ENDPOINTS = {"/user", "/login", "/introspect", "/user/DKUser","/user/forgotPassword"};
 
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
@@ -37,7 +37,7 @@ public class SecurityConfig {
         // Cấu hình quyền truy cập cho các endpoint
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                        //.requestMatchers(HttpMethod.GET, "/user/getAllUser").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/user/numberOfUserAndPost","/user/getAllUser").permitAll()
                         .anyRequest().authenticated()
         );
 

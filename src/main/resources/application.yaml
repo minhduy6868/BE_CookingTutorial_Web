@@ -10,7 +10,7 @@ spring:
     password: lyexpuxldyjdihhr
     properties:
       mail.smtp.auth: true
-      mail.smtp.starttls: true
+      mail.smtp.starttls.enable: true
   jpa:
     hibernate:
       ddl-auto: update

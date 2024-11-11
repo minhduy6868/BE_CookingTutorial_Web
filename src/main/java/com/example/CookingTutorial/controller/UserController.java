@@ -1,25 +1,36 @@
 package com.example.CookingTutorial.controller;
 
+import com.example.CookingTutorial.dto.request.ChangePasswordRequest;
 import com.example.CookingTutorial.dto.request.DKRequest;
 import com.example.CookingTutorial.dto.request.UserCreateRequest;
 //import com.example.CookingTutorial.dto.request.UserUpdateRequest; // DTO cho cập nhật thông tin người dùng
 //import com.example.CookingTutorial.dto.request.ForgotPasswordRequest; // DTO cho quên mật khẩu
+import com.example.CookingTutorial.dto.request.UserForgotPassRequest;
 import com.example.CookingTutorial.dto.response.Response;
+import com.example.CookingTutorial.service.PostService;
 import com.example.CookingTutorial.service.UserService;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.*;
+
+import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
+
 @RestController
 @RequestMapping("/user")
 @Slf4j
 @CrossOrigin
 public class UserController {
-
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PostService postService;
 
     /// For User
 
@@ -74,15 +85,19 @@ public class UserController {
                 .build();
     }
 
-    /*
+
+
     // Quên mật khẩu
     @PostMapping("/forgotPassword")
-    public Response<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        boolean result = userService.forgotPassword(request);
-        if (result) {
+    public Response<?> forgotPassword(@RequestBody UserForgotPassRequest request) {
+        int result = userService.codeEmail(request);
+        Map<String, Object> data=new HashMap<>();
+        data.put("OTP: ", result);
+        if (result != 0) {
             return Response.builder()
                     .status(HttpStatus.OK.value())
                     .message("Password reset email sent successfully!")
+                    .data(data)
                     .build();
         } else {
             return Response.builder()
@@ -92,6 +107,25 @@ public class UserController {
         }
     }
 
+
+    @PutMapping("/update")
+    public Response<?> updateNewPass(@RequestBody ChangePasswordRequest request){
+        if (true) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Change password of email " + request.getEmail()+ " is successfully!")
+                    .data("1")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Error not find email. Please try again.")
+                    .build();
+        }
+
+    }
+
+/*
     // Cập nhật thông tin tài khoản
     @PutMapping("/update")
     public Response<?> updateUser(@RequestBody UserUpdateRequest request) {
@@ -210,4 +244,20 @@ public class UserController {
                 .data(userService.getAllUser())
                 .build();
     }
+
+    @GetMapping("/numberOfUserAndPost")
+    public Response<?> numberOfUser(){
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("user", userService.numberOfUser());
+        data.put("post", postService.numberOfPost());
+
+
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Successfully!")
+                .data(data)
+                .build();
+    }
+
 }
