@@ -1,25 +1,33 @@
 package com.example.CookingTutorial.controller;
 
-import com.example.CookingTutorial.dto.request.DKRequest;
-import com.example.CookingTutorial.dto.request.UserCreateRequest;
+import com.example.CookingTutorial.dto.request.*;
 //import com.example.CookingTutorial.dto.request.UserUpdateRequest; // DTO cho cập nhật thông tin người dùng
 //import com.example.CookingTutorial.dto.request.ForgotPasswordRequest; // DTO cho quên mật khẩu
 import com.example.CookingTutorial.dto.response.Response;
+import com.example.CookingTutorial.service.PostService;
 import com.example.CookingTutorial.service.UserService;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.*;
+
+import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
+
 @RestController
 @RequestMapping("/user")
 @Slf4j
 @CrossOrigin
 public class UserController {
-
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PostService postService;
 
     /// For User
 
@@ -74,15 +82,19 @@ public class UserController {
                 .build();
     }
 
-    /*
+
+
     // Quên mật khẩu
     @PostMapping("/forgotPassword")
-    public Response<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        boolean result = userService.forgotPassword(request);
-        if (result) {
+    public Response<?> forgotPassword(@RequestBody UserForgotPassRequest request) {
+        int result = userService.codeEmail(request);
+        Map<String, Object> data=new HashMap<>();
+        data.put("OTP: ", result);
+        if (result != 0) {
             return Response.builder()
                     .status(HttpStatus.OK.value())
                     .message("Password reset email sent successfully!")
+                    .data(data)
                     .build();
         } else {
             return Response.builder()
@@ -92,8 +104,26 @@ public class UserController {
         }
     }
 
+
+    @PutMapping("/updatePass")
+    public Response<?> updateNewPass(@RequestBody ChangePasswordRequest request){
+        if (userService.changePass(request)==1) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Change password of email " + request.getEmail()+ " is successfully!")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Error not find email. Please try again.")
+                    .build();
+        }
+
+    }
+
+
     // Cập nhật thông tin tài khoản
-    @PutMapping("/update")
+    @PutMapping("/updateUser")
     public Response<?> updateUser(@RequestBody UserUpdateRequest request) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -104,6 +134,8 @@ public class UserController {
                 .build();
     }
 
+
+/*
     // Cập nhật avatar
     @PutMapping("/updateAvatar")
     public Response<?> updateAvatar(@RequestBody String avatarUrl) {
@@ -140,7 +172,7 @@ public class UserController {
     /// For Admin
 
     // Admin có thể xóa 1 hoặc nhiều user, chỉ cần truyền ID vào
-   /* @DeleteMapping("/admin/delete/{userId}")
+   @DeleteMapping("/admin/delete/{userId}")
     public Response<?> deleteUser(@PathVariable("userId") String userId) {
         boolean isDeleted = userService.deleteUser(userId);
         if (isDeleted) {
@@ -155,11 +187,11 @@ public class UserController {
                     .build();
         }
     }
-    */
+
 
     // Admin có thể chỉnh sửa thông tin của 1 user
-    /*@PutMapping("/admin/edit/{userId}")
-    public Response<?> updateUserByAdmin(@PathVariable("userId") String userId, @RequestBody UserUpdateRequest request) {
+    @PutMapping("/admin/edit/{userId}")
+    public Response<?> updateUserByAdmin(@PathVariable("userId") String userId, @RequestBody AdminUpdateUserRequest request) {
         return Response.builder()
                 .status(HttpStatus.OK.value())
                 .message("User information updated successfully.")
@@ -167,12 +199,12 @@ public class UserController {
                 .build();
     }
 
-     */
+
 
     // Admin có thể xóa tất cả các bài viết, chỉ cần truyền ID bài viết vào
-    /*@DeleteMapping("/admin/deletePost/{postId}")
+    @DeleteMapping("/admin/deletePost/{postId}")
     public Response<?> deletePost(@PathVariable("postId") String postId) {
-        boolean isDeleted = userService.deletePost(postId);
+        boolean isDeleted = postService.deletePost(postId);
         if (isDeleted) {
             return Response.builder()
                     .status(HttpStatus.OK.value())
@@ -186,9 +218,23 @@ public class UserController {
         }
     }
 
-     */
+
 
     // Admin lấy số lượng User và bài viết
+    @GetMapping("/admin/count")
+    public Response<?> numberOfUser(){
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("user", userService.numberOfUser());
+        data.put("post", postService.numberOfPost());
+
+
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Successfully!")
+                .data(data)
+                .build();
+    }
     /*@GetMapping("/admin/count")
     public Response<?> getAdminStats() {
         var stats = userService.getAdminStats();
@@ -210,4 +256,7 @@ public class UserController {
                 .data(userService.getAllUser())
                 .build();
     }
+
+
+
 }

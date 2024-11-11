@@ -10,11 +10,15 @@ spring:
     password: lyexpuxldyjdihhr
     properties:
       mail.smtp.auth: true
+<<<<<<< HEAD
       mail.smtp.starttls: true
   servlet:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+=======
+      mail.smtp.starttls.enable: true
+>>>>>>> 3f7efa78738a83d04f90a4a27eb960454be9a049
   jpa:
     hibernate:
       ddl-auto: update

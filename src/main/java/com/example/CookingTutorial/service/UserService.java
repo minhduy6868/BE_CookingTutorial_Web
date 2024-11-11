@@ -1,8 +1,6 @@
 package com.example.CookingTutorial.service;
 
-import com.example.CookingTutorial.dto.request.DKRequest;
-import com.example.CookingTutorial.dto.request.UserCreateRequest;
-import com.example.CookingTutorial.dto.response.Response;
+import com.example.CookingTutorial.dto.request.*;
 import com.example.CookingTutorial.dto.response.UserResponse;
 import com.example.CookingTutorial.entity.User;
 import com.example.CookingTutorial.enums.Role;
@@ -20,21 +18,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 
 @Service
 @Slf4j
+
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private JavaMailSender mailSender;
 
@@ -51,15 +46,6 @@ public class UserService {
         return "Register successfull!";
     }
     public UserResponse createUser(UserCreateRequest request){
-//        Random r = new Random();
-//        int ramdomNumber = r.nextInt(1000,9999);
-//        sendEmail(request.getEmail(),"Mã xác thực", "Mã xác thực của bạn là: " + ramdomNumber);
-//
-//        if(ramdomNumber){
-//
-//        }
-//
-//        return ;
         User user = new User();
 
         user.setAddress(request.getAddress());
@@ -87,16 +73,42 @@ public class UserService {
                 .Post(user.getPost())
                 .build();
     }
-    public
 
-    void sendEmail(String to, String subject, String body) {
+    // send otp to email
+    String sendEmail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
 
         mailSender.send(message);
+
+        return message.getText();
     }
+    public int codeEmail(UserForgotPassRequest request){
+        Random r = new Random();
+        int randomNumber = r.nextInt(100000, 999999+1);
+        if(userRepository.findByEmail(request.getEmail()).isEmpty()){
+            return 0;
+        }
+        return Integer.parseInt(sendEmail(request.getEmail(),"Mã kích hoạt", String.valueOf(randomNumber)));
+    }
+
+    // change password
+    public int changePass(ChangePasswordRequest request){
+        if(userRepository.findByEmail(request.getEmail()).isEmpty()){
+            return 0;
+        }
+
+        User user = userRepository.findByEmail(request.getEmail()).get();
+
+        user.setPassword(new BCryptPasswordEncoder(10).encode(request.getNewPassword()));
+
+        userRepository.save(user);
+
+        return 1;
+    }
+
     public UserResponse getMyInfo(){
         var context = SecurityContextHolder.getContext();
         String name=context.getAuthentication().getName();
@@ -115,6 +127,20 @@ public class UserService {
                 .Post(user.getPost())
                 .build();
     }
+
+    public User updateUser(String email, UserUpdateRequest request){
+        User user = userRepository.findByEmail(email).get();
+
+        user.setFullName(request.getFullName());
+        user.setDescription(request.getDescription());
+        user.setAddress(request.getAddress());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setAvatar(request.getAvatar());
+
+        userRepository.save(user);
+        return user;
+    }
+
 
     @PostAuthorize("returnObject.email == authentication.name") // kiểm tra đúng email kia mới cho kiểm tra
     public User getUser(String userId){
@@ -150,6 +176,37 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public int numberOfUser(){
+        List<User> list=userRepository.findAll();
+        return list.size();
+    }
 
+    public boolean deleteUser(String userId){
+        if(userRepository.findById(userId).isEmpty()){
+            return false;
+        }
+        userRepository.deleteById(userId);
+        return true;
+    }
+
+    public User updateUserByAdmin(String userId, AdminUpdateUserRequest request){
+        User user = userRepository.findById(userId).get();
+
+        user.setAddress(request.getAddress());
+        user.setEmail(request.getEmail());
+        user.setAvatar(request.getAvatar());
+        user.setDescription(request.getDescription());
+        user.setPassword(new BCryptPasswordEncoder(10).encode(request.getPassword())); // mã hóa mật khẩu
+        user.setFullName(request.getFullName());
+        user.setPhoneNumber(request.getPhoneNumber());
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(request.getRoles().toUpperCase());
+        user.setRoles(roles);
+
+        userRepository.save(user);
+
+        return user;
+    }
 
 }
