@@ -3,13 +3,16 @@ package com.example.CookingTutorial.config;
 import com.cloudinary.Cloudinary;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
+@CrossOrigin
 public class CloudinaryConfig {
-
 
     @Bean
     public Cloudinary getCloudinary() {

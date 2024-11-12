@@ -42,8 +42,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.PUT,PUT_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/cloudinary/upload").permitAll()
                         .requestMatchers(HttpMethod.DELETE,DELETE_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.POST,"/cloudinary/upload").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/user/admin/count","/user/getAllUser").permitAll()
                         .anyRequest().authenticated()
         );

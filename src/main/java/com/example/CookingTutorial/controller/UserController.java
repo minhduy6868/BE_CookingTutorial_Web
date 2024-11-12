@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -222,6 +223,7 @@ public class UserController {
 
     // Admin lấy số lượng User và bài viết
     @GetMapping("/admin/count")
+    @PreAuthorize("hasRole('ADMIN')")
     public Response<?> numberOfUser(){
         Map<String, Object> data = new HashMap<>();
 

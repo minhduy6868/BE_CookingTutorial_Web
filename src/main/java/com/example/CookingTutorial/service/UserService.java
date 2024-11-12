@@ -129,17 +129,31 @@ public class UserService {
     }
 
     public User updateUser(String email, UserUpdateRequest request){
-        User user = userRepository.findByEmail(email).get();
+        // Lấy user từ email
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        user.setFullName(request.getFullName());
-        user.setDescription(request.getDescription());
-        user.setAddress(request.getAddress());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setAvatar(request.getAvatar());
+        // Chỉ cập nhật trường nếu giá trị không phải là null
+        if (request.getFullName() != null) {
+            user.setFullName(request.getFullName());
+        }
+        if (request.getDescription() != null) {
+            user.setDescription(request.getDescription());
+        }
+        if (request.getAddress() != null) {
+            user.setAddress(request.getAddress());
+        }
+        if (request.getPhoneNumber() != null) {
+            user.setPhoneNumber(request.getPhoneNumber());
+        }
+        if (request.getAvatar() != null) {
+            user.setAvatar(request.getAvatar());
+        }
 
+        // Lưu lại đối tượng user sau khi cập nhật
         userRepository.save(user);
         return user;
     }
+
 
 
     @PostAuthorize("returnObject.email == authentication.name") // kiểm tra đúng email kia mới cho kiểm tra
@@ -182,6 +196,7 @@ public class UserService {
         return list.size();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteUser(String userId){
         if(userRepository.findById(userId).isEmpty()){
             return false;
@@ -190,6 +205,7 @@ public class UserService {
         return true;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public User updateUserByAdmin(String userId, AdminUpdateUserRequest request){
         User user = userRepository.findById(userId).get();
 
