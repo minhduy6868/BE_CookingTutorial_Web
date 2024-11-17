@@ -24,6 +24,10 @@ public class Post {
     String tutorial;
     int likeCount;
 
+
+    @ElementCollection
+    List<User> listUserLike;
+
     @OneToMany(mappedBy = "post")
     List<Ingredient> ingredients;
 

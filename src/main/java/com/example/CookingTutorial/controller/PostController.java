@@ -1,6 +1,7 @@
 package com.example.CookingTutorial.controller;
 
 import com.example.CookingTutorial.dto.response.Response;
+import com.example.CookingTutorial.entity.CommentPost;
 import com.example.CookingTutorial.entity.LikePost;
 import com.example.CookingTutorial.entity.Post;
 import com.example.CookingTutorial.entity.User;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,7 +84,7 @@ public class PostController {
         if (user == null) {
             return Response.builder()
                     .status(HttpStatus.UNAUTHORIZED.value())
-                    .message("Người dùng không tìm thấy")
+                    .message("User not found!")
                     .build();
         }
 
@@ -90,28 +92,28 @@ public class PostController {
         if (post == null) {
             return Response.builder()
                     .status(HttpStatus.NOT_FOUND.value())
-                    .message("Bài viết không tìm thấy")
+                    .message("Post not found!")
                     .build();
         }
 
         // Kiểm tra nếu người dùng đã like thì hủy like
         Optional<LikePost> existingLike =   likeRepository.findByUserAndPost(user, post);
         if (existingLike.isPresent()) {
-
             LikePost likePost = existingLike.get();
             likeRepository.delete(likePost);
+
+            post.getListUserLike().remove(user); // xóa cái user lại lần 2 ra khỏi list
 
             post.setLikeCount(post.getLikeCount() - 1);
             postService.updatePost(post);
             return Response.builder()
                     .status(HttpStatus.BAD_REQUEST.value())
-                    .message("Bạn đã hủy thích bài viết này ")
+                    .message("You have unliked this post!")
                     .data(post)
                     .build();
         }
 
-
-        // Tạo mới quan hệ "like" giữa người dùng và bài viết
+        // Tạo mới "like" giữa người dùng và bài viết
         LikePost likePost = new LikePost();
         likePost.setUser(user);
         likePost.setPost(post);
@@ -119,12 +121,71 @@ public class PostController {
 
         // Tăng số lượng like của bài viết
         post.setLikeCount(post.getLikeCount() + 1);
+        post.getListUserLike().add(user);// thêm cái user lại lần 2 ra khỏi list
         postService.updatePost(post);
 
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Like bài viết thành công")
+                .message("Liked the successful!")
                 .data(post)
+                .build();
+    }
+
+    // comment post
+    @PostMapping("/comment/{post_id}")
+    public Response<?> addComment(@PathVariable("post_id") String postId, @RequestBody String content) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            return Response.builder()
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .message("User not found!")
+                    .build();
+        }
+
+        Post post = postService.getPost(postId);
+        if (post == null) {
+            return Response.builder()
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .message("Post not found!")
+                    .build();
+        }
+
+        // lưu comment do user đăng và lưu vào post
+        CommentPost commentPost = CommentPost.builder()
+                .content(content)
+                .createdAt(LocalDateTime.now())
+                .post(post)
+                .user(user)
+                .build();
+
+        postService.saveComment(commentPost);
+
+        return Response.builder()
+                .status(HttpStatus.CREATED.value())
+                .message("add comment successfully!")
+                .data(commentPost)
+                .build();
+    }
+
+    //Lấy danh sách bình luận theo bài viết
+    @GetMapping("/comment/{post_id}")
+    public Response<?> getComments(@PathVariable("post_id") String postId) {
+        Post post = postService.getPost(postId);
+        if (post == null) {
+            return Response.builder()
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .message("Post not found!")
+                    .build();
+        }
+
+        List<CommentPost> comments = postService.getCommentsByPost(post);
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Lấy danh sách bình luận thành công")
+                .data(comments)
                 .build();
     }
 }
