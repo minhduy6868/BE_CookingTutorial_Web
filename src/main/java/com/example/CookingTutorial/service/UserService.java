@@ -4,9 +4,7 @@ import com.example.CookingTutorial.dto.request.*;
 import com.example.CookingTutorial.dto.response.UserResponse;
 import com.example.CookingTutorial.entity.User;
 import com.example.CookingTutorial.enums.Role;
-import com.example.CookingTutorial.reponsitory.UserRepository;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
+import com.example.CookingTutorial.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -18,7 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.*;
 
@@ -74,8 +71,12 @@ public class UserService {
                 .build();
     }
 
+    public boolean checkEmail(String email){
+        return userRepository.findByEmail(email).isEmpty();
+    }
+
     // send otp to email
-    String sendEmail(String to, String subject, String body) {
+    private String sendEmail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
@@ -85,26 +86,39 @@ public class UserService {
 
         return message.getText();
     }
+
+    private Map<String, String> otpStorage = new HashMap<>();
     public int codeEmail(UserForgotPassRequest request){
-        Random r = new Random();
-        int randomNumber = r.nextInt(100000, 999999+1);
-        if(userRepository.findByEmail(request.getEmail()).isEmpty()){
+
+        if(checkEmail(request.getEmail())){
             return 0;
         }
+
+        Random r = new Random();
+        int randomNumber = r.nextInt(100000, 999999+1);
+
+        otpStorage.put(request.getEmail(), String.valueOf(randomNumber)); // lưu otp và gmail lại với nhau
+
         return Integer.parseInt(sendEmail(request.getEmail(),"Mã kích hoạt", String.valueOf(randomNumber)));
     }
 
     // change password
     public int changePass(ChangePasswordRequest request){
+
         if(userRepository.findByEmail(request.getEmail()).isEmpty()){
             return 0;
         }
 
+        // Kiểm tra email và OTP có khớp không
+        if (!otpStorage.containsKey(request.getEmail()) || !Objects.equals(otpStorage.get(request.getEmail()), request.getOtp())) {
+            return 0; // Trả về lỗi nếu OTP không hợp lệ
+        }
+
         User user = userRepository.findByEmail(request.getEmail()).get();
-
         user.setPassword(new BCryptPasswordEncoder(10).encode(request.getNewPassword()));
-
         userRepository.save(user);
+
+        otpStorage.remove(request.getEmail()); // xóa cái otp
 
         return 1;
     }
@@ -127,6 +141,7 @@ public class UserService {
                 .Post(user.getPost())
                 .build();
     }
+
 
     public User updateUser(String email, UserUpdateRequest request){
         // Lấy user từ email
@@ -207,6 +222,12 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public User updateUserByAdmin(String userId, AdminUpdateUserRequest request){
+//        Optional<User> userOptional=userRepository.findById(userId);
+//
+//        if (userOptional.isEmpty()){
+//            return false;
+//        }
+
         User user = userRepository.findById(userId).get();
 
         user.setAddress(request.getAddress());
@@ -225,5 +246,14 @@ public class UserService {
 
         return user;
     }
+
+
+
+
+    // method other
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
 
 }

@@ -2,7 +2,7 @@ package com.example.CookingTutorial.config;
 
 import com.example.CookingTutorial.entity.User;
 import com.example.CookingTutorial.enums.Role;
-import com.example.CookingTutorial.reponsitory.UserRepository;
+import com.example.CookingTutorial.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

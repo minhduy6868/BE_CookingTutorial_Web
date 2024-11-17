@@ -12,4 +12,5 @@ import lombok.experimental.FieldDefaults;
 public class ChangePasswordRequest {
     String email;
     String newPassword;
+    String otp;
 }
