@@ -1,5 +1,7 @@
 package com.example.CookingTutorial.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +22,7 @@ public class Post {
     String title;
     String description;
     String tutorial;
+    int likeCount;
 
     @OneToMany(mappedBy = "post")
     List<Ingredient> ingredients;
@@ -30,6 +33,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties("post") // bỏ qua thuộc tính post có trong user
     User user;
 
 }

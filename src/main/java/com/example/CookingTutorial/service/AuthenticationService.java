@@ -5,7 +5,7 @@ import com.example.CookingTutorial.dto.request.IntrospectRequest;
 import com.example.CookingTutorial.dto.response.AuthenticationResponse;
 import com.example.CookingTutorial.dto.response.IntrospectResponse;
 import com.example.CookingTutorial.entity.User;
-import com.example.CookingTutorial.reponsitory.UserRepository;
+import com.example.CookingTutorial.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;

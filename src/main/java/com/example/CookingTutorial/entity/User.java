@@ -1,5 +1,7 @@
 package com.example.CookingTutorial.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -27,5 +29,6 @@ public class User {
     Set<String> roles;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user") // bỏ qua thuộc tính user có trong post
     List<Post> Post;
 }

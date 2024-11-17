@@ -1,13 +1,9 @@
 package com.example.CookingTutorial.controller;
 
 import com.example.CookingTutorial.dto.request.*;
-//import com.example.CookingTutorial.dto.request.UserUpdateRequest; // DTO cho cập nhật thông tin người dùng
-//import com.example.CookingTutorial.dto.request.ForgotPasswordRequest; // DTO cho quên mật khẩu
 import com.example.CookingTutorial.dto.response.Response;
 import com.example.CookingTutorial.service.PostService;
 import com.example.CookingTutorial.service.UserService;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
 
 @RestController
 @RequestMapping("/user")
@@ -34,11 +29,18 @@ public class UserController {
 
     @PostMapping // Tạo mới 1 user
     public Response<?> createUser(@RequestBody UserCreateRequest request) {
+        if (userService.checkEmail(request.getEmail())){
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Create user successfully!")
+                    .data(userService.createUser(request))
+                    .build();
+        }
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Create user successfully")
-                .data(userService.createUser(request))
+                .message("Create user fail! Email already exists.")
                 .build();
+
     }
 
     @GetMapping // Lấy tất cả người dùng
@@ -50,7 +52,7 @@ public class UserController {
 
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Get users successfully")
+                .message("Get users successfully!")
                 .data(userService.getUsers())
                 .build();
     }
@@ -59,7 +61,7 @@ public class UserController {
     public Response<?> getUser(@PathVariable("userId") String userId) {
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Get user by id successfully")
+                .message("Get user by id successfully!")
                 .data(userService.getUser(userId))
                 .build();
     }
@@ -76,10 +78,16 @@ public class UserController {
     // Đăng ký tài khoản
     @PostMapping("/DKUser")
     public Response<?> DKUser(@RequestBody DKRequest request) {
+        if(userService.checkEmail(request.getEmail())){
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Register successfully!")
+                    .data(userService.DKUser(request))
+                    .build();
+        }
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Register successfully!")
-                .data(userService.DKUser(request))
+                .message("Register fail! Email already exists.")
                 .build();
     }
 
@@ -108,7 +116,8 @@ public class UserController {
 
     @PutMapping("/updatePass")
     public Response<?> updateNewPass(@RequestBody ChangePasswordRequest request){
-        if (userService.changePass(request)==1) {
+
+        if (userService.changePass(request)==1 ) {
             return Response.builder()
                     .status(HttpStatus.OK.value())
                     .message("Change password of email " + request.getEmail()+ " is successfully!")
@@ -179,12 +188,12 @@ public class UserController {
         if (isDeleted) {
             return Response.builder()
                     .status(HttpStatus.OK.value())
-                    .message("User deleted successfully.")
+                    .message("User deleted successfully!")
                     .build();
         } else {
             return Response.builder()
                     .status(HttpStatus.BAD_REQUEST.value())
-                    .message("Failed to delete user.")
+                    .message("Failed to delete user!")
                     .build();
         }
     }
@@ -195,7 +204,7 @@ public class UserController {
     public Response<?> updateUserByAdmin(@PathVariable("userId") String userId, @RequestBody AdminUpdateUserRequest request) {
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("User information updated successfully.")
+                .message("User information updated successfully!")
                 .data(userService.updateUserByAdmin(userId, request))
                 .build();
     }
@@ -233,7 +242,7 @@ public class UserController {
 
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Successfully!")
+                .message("Admin statistics retrieved successfully.!")
                 .data(data)
                 .build();
     }
