@@ -35,6 +35,11 @@ public class PostService {
     public Post getPost(String post_id){
         return postRepository.findById(post_id).orElse(null);
     }
+
+    public List<Post> getAllPost(){
+        return  postRepository.findAll();
+    }
+
     public List<Post> searchPostsByTitle(String title) {
         return postRepository.findByTitleContainingIgnoreCase(title);
     }

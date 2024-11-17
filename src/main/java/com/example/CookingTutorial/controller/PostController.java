@@ -45,7 +45,17 @@ public class PostController {
                 .build();
     }
 
-    // Tìm kiếm bài viết theo tiêu đề
+    @GetMapping("/getAllPost")
+    public Response<?> getAllPost(){
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all post successfully")
+                .data(postService.getAllPost())
+                .build();
+    }
+
+
+    // Tìm kiếm bài viết theo title
     @GetMapping("/search")
     public Response<?> searchPostsByTitle(@RequestParam("title") String title) {
         List<Post> posts = postService.searchPostsByTitle(title);
@@ -63,7 +73,6 @@ public class PostController {
     }
 
     //like bài viết
-
     @PostMapping("/like/{post_id}")
     public Response<?> likePost(@PathVariable("post_id") String postId) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -118,11 +127,4 @@ public class PostController {
                 .data(post)
                 .build();
     }
-
-
-
-
-
-
-
 }
