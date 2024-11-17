@@ -1,6 +1,8 @@
 package com.example.CookingTutorial.service;
 
+import com.example.CookingTutorial.entity.CommentPost;
 import com.example.CookingTutorial.entity.Post;
+import com.example.CookingTutorial.repository.CommentRepository;
 import com.example.CookingTutorial.repository.LikeRepository;
 import com.example.CookingTutorial.repository.PostRepository;
 import com.example.CookingTutorial.repository.UserRepository;
@@ -20,6 +22,9 @@ public class PostService {
     private LikeRepository likeRepository;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
     public int numberOfPost(){
         List<Post> list=postRepository.findAll();
         return list.size();
@@ -47,5 +52,16 @@ public class PostService {
 
     public void updatePost(Post post) {
         postRepository.save(post);
+    }
+
+
+
+    // comment post
+    public CommentPost saveComment(CommentPost comment) {
+        return commentRepository.save(comment);
+    }
+
+    public List<CommentPost> getCommentsByPost(Post post) {
+        return commentRepository.findByPost(post);
     }
 }
