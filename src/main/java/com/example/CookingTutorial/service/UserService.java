@@ -2,6 +2,7 @@ package com.example.CookingTutorial.service;
 
 import com.example.CookingTutorial.dto.request.*;
 import com.example.CookingTutorial.dto.response.UserResponse;
+import com.example.CookingTutorial.entity.Post;
 import com.example.CookingTutorial.entity.User;
 import com.example.CookingTutorial.enums.Role;
 import com.example.CookingTutorial.repository.UserRepository;
@@ -141,6 +142,20 @@ public class UserService {
                 .Post(user.getPost())
                 .build();
     }
+    public UserResponse getInfo(String userId){
+        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("Not find user!"));
+        return UserResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .avatar(user.getAvatar())
+                .description(user.getDescription())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
+                .roles(user.getRoles())
+                .Post(user.getPost())
+                .build();
+    }
 
 
     public User updateUser(String email, UserUpdateRequest request){
@@ -222,26 +237,24 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public User updateUserByAdmin(String userId, AdminUpdateUserRequest request){
-//        Optional<User> userOptional=userRepository.findById(userId);
-//
-//        if (userOptional.isEmpty()){
-//            return false;
-//        }
 
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));;
 
-        user.setAddress(request.getAddress());
         user.setEmail(request.getEmail());
+        user.setAddress(request.getAddress());
         user.setAvatar(request.getAvatar());
         user.setDescription(request.getDescription());
-        user.setPassword(new BCryptPasswordEncoder(10).encode(request.getPassword())); // mã hóa mật khẩu
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            user.setPassword(new BCryptPasswordEncoder(10).encode(request.getPassword())); // Chỉ mã hóa và cập nhật nếu có mật khẩu mới
+        }
         user.setFullName(request.getFullName());
         user.setPhoneNumber(request.getPhoneNumber());
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(request.getRoles().toUpperCase());
-        user.setRoles(roles);
-
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            HashSet<String> roles = new HashSet<>();
+            roles.add(request.getRoles().toUpperCase());
+            user.setRoles(roles);
+        }
         userRepository.save(user);
 
         return user;

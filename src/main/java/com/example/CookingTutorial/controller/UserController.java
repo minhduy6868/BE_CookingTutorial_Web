@@ -74,6 +74,14 @@ public class UserController {
                 .data(userService.getMyInfo())
                 .build();
     }
+    @GetMapping("/info/{userId}") // Lấy thông tin của người khác dùng khi click vào
+    public Response<?> getInfo(@PathVariable("userId") String userId) {
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get info successfully!")
+                .data(userService.getInfo(userId))
+                .build();
+    }
 
     // Đăng ký tài khoản
     @PostMapping("/DKUser")

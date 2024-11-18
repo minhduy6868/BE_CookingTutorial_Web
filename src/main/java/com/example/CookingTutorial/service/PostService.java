@@ -57,8 +57,8 @@ public class PostService {
 
 
     // comment post
-    public CommentPost saveComment(CommentPost comment) {
-        return commentRepository.save(comment);
+    public void saveComment(CommentPost comment) {
+        commentRepository.save(comment);
     }
 
     public List<CommentPost> getCommentsByPost(Post post) {

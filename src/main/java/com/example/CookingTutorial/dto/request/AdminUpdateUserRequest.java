@@ -20,5 +20,5 @@ public class AdminUpdateUserRequest {
     String phoneNumber;
     String address;
     String roles;
-    List<Post> Post;
+//    List<Post> Post;
 }
