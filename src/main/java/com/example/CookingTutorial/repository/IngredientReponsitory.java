@@ -1,4 +1,4 @@
-package com.example.CookingTutorial.repository;
+package com.example.CookingTutorial.reponsitory;
 
 import com.example.CookingTutorial.entity.Ingredient;
 import org.springframework.data.jpa.repository.JpaRepository;
