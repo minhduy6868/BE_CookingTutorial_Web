@@ -1,17 +1,24 @@
 package com.example.CookingTutorial.controller;
 
+import com.example.CookingTutorial.dto.request.PostCreateRequest;
 import com.example.CookingTutorial.dto.response.Response;
-import com.example.CookingTutorial.entity.CommentPost;
-import com.example.CookingTutorial.entity.LikePost;
-import com.example.CookingTutorial.entity.Post;
-import com.example.CookingTutorial.entity.User;
+import com.example.CookingTutorial.entity.*;
+import com.example.CookingTutorial.repository.DislikeRepository;
 import com.example.CookingTutorial.repository.LikeRepository;
 import com.example.CookingTutorial.service.PostService;
 import com.example.CookingTutorial.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.protocol.ResponseDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +37,9 @@ public class PostController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DislikeRepository dislikeRepository;
 
 
     @GetMapping("/{post_id}")
@@ -52,7 +62,7 @@ public class PostController {
     public Response<?> getAllPost(){
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Get all post successfully")
+                .message("Get all post successfully!")
                 .data(postService.getAllPost())
                 .build();
     }
@@ -132,6 +142,70 @@ public class PostController {
                 .build();
     }
 
+    //dislike post
+    @PostMapping("/dislike/{post_id}")
+    public Response<?> dislikePost(@PathVariable("post_id") String postId) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            return Response.builder()
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .message("User not fuond!")
+                    .build();
+        }
+
+        Post post = postService.getPost(postId);
+        if (post == null) {
+            return Response.builder()
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .message("Post not found!")
+                    .build();
+        }
+//        // Kiểm tra và hủy trạng thái "like" nếu người dùng đang "like"
+//        Optional<LikePost> existingLike = likeRepository.findByUserAndPost(user, post);
+//        if (existingLike.isPresent()) {
+//
+//            likeRepository.delete(existingLike.get());
+//            post.setLikeCount(post.getLikeCount() - 1);
+//            post.getListUserLike().remove(user);
+//
+//            postService.updatePost(post);
+//        }
+
+        // Kiểm tra nếu người dùng đã dislike bài viết
+        Optional<DislikePost> existingDislike = dislikeRepository.findByUserAndPost(user, post);
+        if (existingDislike.isPresent()) {
+            // Hủy dislike
+            dislikeRepository.delete(existingDislike.get());
+            post.setDislikeCount(post.getDislikeCount() - 1);
+
+            postService.updatePost(post);
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Cancel dislike successfully!")
+                    .data(post)
+                    .build();
+        }
+
+        // Tạo mới dislike
+        DislikePost dislikePost = new DislikePost();
+        dislikePost.setUser(user);
+        dislikePost.setPost(post);
+        dislikeRepository.save(dislikePost);
+
+        // Tăng số lượng dislike của bài viết
+        post.setDislikeCount(post.getDislikeCount() + 1);
+        postService.updatePost(post);
+
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Dislike post successfully!")
+                .data(post)
+                .build();
+    }
+
     // comment post
     @PostMapping("/comment/{post_id}")
     public Response<?> addComment(@PathVariable("post_id") String postId, @RequestBody String content) {
@@ -185,8 +259,45 @@ public class PostController {
         List<CommentPost> comments = postService.getCommentsByPost(post);
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Lấy danh sách bình luận thành công")
+                .message("Get comment of post have id"+ postId +" successfully!")
                 .data(comments)
+                .build();
+    }
+
+//    upload file
+    @PostMapping("/createPost")
+    public Response<?> createPost(
+            @RequestPart("post") String postJson, // Thông tin bài viết
+            @RequestPart("images") MultipartFile[] files, // Danh sách ảnh từ các bước
+            @RequestPart("fileVideo") MultipartFile fileVideo
+    ) {
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            return Response.builder()
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .message("User not found!")
+                    .build();
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PostCreateRequest postRequest;
+        try {
+            postRequest = objectMapper.readValue(postJson, PostCreateRequest.class);
+        } catch (JsonProcessingException e) {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .build();
+        }
+        Post post = postService.createPost(postRequest, files, user, fileVideo);
+
+        return Response.builder()
+                .status(HttpStatus.CREATED.value())
+                .message("Create post successfully!")
+                .data(post)
                 .build();
     }
 }

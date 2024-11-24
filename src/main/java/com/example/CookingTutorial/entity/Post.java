@@ -1,6 +1,5 @@
 package com.example.CookingTutorial.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,13 +15,15 @@ import java.util.List;
 @Entity
 public class Post {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     String linkVideo;
     String title;
     String description;
     String tutorial;
-    int likeCount;
+    String typePost;
+    int likeCount=0;
+    int dislikeCount=0;
 
 
     @ElementCollection
@@ -31,7 +32,8 @@ public class Post {
     @OneToMany(mappedBy = "post")
     List<Ingredient> ingredients;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("post")
     List<Picture> pictures;
 
 

@@ -33,7 +33,7 @@ public class SecurityConfig {
 
     private final String[] DELETE_ENDPOINTS = {"/user/admin/delete/{userId}","/user/admin/deletePost/{postId}"};
 
-    private final String[] GET_ENDPOINTS = {"/post/{post_id}", "/post/search", "/post/getAllPost","user/info/{userId}"};
+    private final String[] GET_ENDPOINTS = {"/post/{post_id}", "/post/search", "/post/getAllPost","user/info/{userId}","/post/file/{fileName:.+}"};
 
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
@@ -44,10 +44,10 @@ public class SecurityConfig {
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.PUT,PUT_ENDPOINTS).permitAll()
-              //          .requestMatchers(HttpMethod.POST, "/cloudinary/upload").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/cloudinary/upload", "/post/createPost").permitAll()
                         .requestMatchers(HttpMethod.DELETE,DELETE_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, GET_ENDPOINTS).permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/user/admin/count","/user/getAllUser","/post/{post_id}","/post/search","user/info/{userId}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/admin/count","/user/getAllUser","/post/{post_id}","/post/search","user/info/{userId}","/post/file/{fileName:.+}").permitAll()
                         .anyRequest().authenticated()
         );
 

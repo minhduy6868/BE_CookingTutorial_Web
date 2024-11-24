@@ -1,6 +1,5 @@
 package com.example.CookingTutorial.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,16 +10,17 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Ingredient {
+public class DislikePost {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
-    String ingredientName;
-    String quantity;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    @JsonIgnoreProperties("ingredients")
     Post post;
 
 }

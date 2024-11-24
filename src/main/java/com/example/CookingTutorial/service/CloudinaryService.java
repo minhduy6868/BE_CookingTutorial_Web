@@ -20,7 +20,16 @@ public class CloudinaryService {
         try {
             // Tải ảnh lên Cloudinary
             Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-
+            // Trả về URL của ảnh
+            return (String) uploadResult.get("url");
+        } catch (IOException e) {
+            throw new RuntimeException("Image upload failed", e);
+        }
+    }
+    public String uploadVideo(MultipartFile file) {
+        try {
+            // Tải ảnh lên Cloudinary
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "video"));
             // Trả về URL của ảnh
             return (String) uploadResult.get("url");
         } catch (IOException e) {

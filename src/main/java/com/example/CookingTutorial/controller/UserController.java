@@ -206,7 +206,6 @@ public class UserController {
         }
     }
 
-
     // Admin có thể chỉnh sửa thông tin của 1 user
     @PutMapping("/admin/edit/{userId}")
     public Response<?> updateUserByAdmin(@PathVariable("userId") String userId, @RequestBody AdminUpdateUserRequest request) {
@@ -216,8 +215,6 @@ public class UserController {
                 .data(userService.updateUserByAdmin(userId, request))
                 .build();
     }
-
-
 
     // Admin có thể xóa tất cả các bài viết, chỉ cần truyền ID bài viết vào
     @DeleteMapping("/admin/deletePost/{postId}")
@@ -235,8 +232,6 @@ public class UserController {
                     .build();
         }
     }
-
-
 
     // Admin lấy số lượng User và bài viết
     @GetMapping("/admin/count")
@@ -275,7 +270,4 @@ public class UserController {
                 .data(userService.getAllUser())
                 .build();
     }
-
-
-
 }
