@@ -138,7 +138,6 @@ public class PostService {
         Post post = Post.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
-//                .linkVideo(request.getLinkVideo())
                 .typePost(request.getTypePost())
                 .tutorial(request.getTutorial())
                 .user(user)

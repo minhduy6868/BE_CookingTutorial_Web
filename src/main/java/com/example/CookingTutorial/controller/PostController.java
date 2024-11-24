@@ -267,8 +267,11 @@ public class PostController {
 //    upload file
     @PostMapping("/createPost")
     public Response<?> createPost(
-            @RequestPart("post") String postJson, // Thông tin bài viết
-            @RequestPart("images") MultipartFile[] files, // Danh sách ảnh từ các bước
+            @RequestPart("title") String title,
+            @RequestPart("description") String description,
+            @RequestPart("tutorial") String tutorial,
+            @RequestPart("typePost") String typePost,
+            @RequestPart("images") MultipartFile[] files,
             @RequestPart("fileVideo") MultipartFile fileVideo
     ) {
 
@@ -283,15 +286,14 @@ public class PostController {
                     .build();
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        PostCreateRequest postRequest;
-        try {
-            postRequest = objectMapper.readValue(postJson, PostCreateRequest.class);
-        } catch (JsonProcessingException e) {
-            return Response.builder()
-                    .status(HttpStatus.BAD_REQUEST.value())
-                    .build();
-        }
+
+        PostCreateRequest postRequest = new PostCreateRequest();
+        postRequest.setDescription(description);
+        postRequest.setTypePost(typePost);
+        postRequest.setTitle(title);
+        postRequest.setTutorial(tutorial);
+
+
         Post post = postService.createPost(postRequest, files, user, fileVideo);
 
         return Response.builder()
