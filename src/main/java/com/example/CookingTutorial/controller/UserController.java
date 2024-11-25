@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -153,20 +154,34 @@ public class UserController {
     }
 
 
-/*
     // Cập nhật avatar
     @PutMapping("/updateAvatar")
-    public Response<?> updateAvatar(@RequestBody String avatarUrl) {
+    public Response<?> updateAvatar(@RequestPart("image") MultipartFile avatarUrl) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        return Response.builder()
-                .status(HttpStatus.OK.value())
-                .message("Avatar updated successfully!")
-                .data(userService.updateAvatar(email, avatarUrl))
-                .build();
+
+        boolean isUpdateAvatar = userService.updateAvatar(email, avatarUrl);
+
+        if (isUpdateAvatar) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Update avatar successfully!")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Update avatar fail!")
+                    .build();
+        }
+
+//        return Response.builder()
+//                .status(HttpStatus.OK.value())
+//                .message("Avatar updated successfully!")
+//                .data(userService.updateAvatar(email, avatarUrl))
+//                .build();
     }
 
-    */
+
 
     // Xóa tài khoản của chính mình
     @DeleteMapping("/deleteAccount")

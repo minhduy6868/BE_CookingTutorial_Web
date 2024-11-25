@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -31,6 +32,8 @@ public class UserService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     //For User
 
@@ -157,6 +160,19 @@ public class UserService {
                 .build();
     }
 
+    public boolean updateAvatar(String email, MultipartFile image){
+        Optional<User> userOpt = userRepository.findByEmail(email);
+
+        if(userOpt.isPresent()){
+            User user = userOpt.get();
+            user.setAvatar(cloudinaryService.uploadImage(image));
+            userRepository.save(user);
+            log.info("User with email {} deleted successfully.", email);
+            return true;
+        }
+        log.warn("User with email {} not found for deletion.", email);
+        return false;
+    }
 
     public User updateUser(String email, UserUpdateRequest request){
         // Lấy user từ email
@@ -259,6 +275,7 @@ public class UserService {
 
         return user;
     }
+
 
 
 

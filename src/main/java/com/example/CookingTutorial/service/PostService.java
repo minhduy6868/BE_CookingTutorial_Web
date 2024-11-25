@@ -95,42 +95,9 @@ public class PostService {
         return commentRepository.findByPost(post);
     }
 
-
-    // file
-//    public Post createPost(PostCreateRequest request, MultipartFile[] files, User user, MultipartFile fileVideo) {
-//
-//        Post post = Post.builder()
-//                .title(request.getTitle())
-//                .description(request.getDescription())
-//                .typePost(request.getTypePost())
-//                .tutorial(request.getTutorial())
-//                .user(user)
-//                .build();
-//
-//
-//
-//        List<Picture> pictures = new ArrayList<>();
-//        for (int i = 0; i < files.length; i++) {
-//            MultipartFile file = files[i];
-//            String imageUrl = cloudinaryService.uploadImage(file); // Upload ảnh lên Cloudinary
-//
-//            Picture picture = Picture.builder()
-//                    .link(imageUrl)
-//                    .alt("Step " + (i + 1) + " image for post " + post.getTitle())
-//                    .post(post)
-//                    .build();
-//
-//            pictures.add(picture);
-////            post.getPictures().add(picture);
-//        }
-//
-//        post.setLinkVideo(cloudinaryService.uploadImage(fileVideo));
-//
-//        post = postRepository.save(post);
-//        pictureRepository.saveAll(pictures);
-//
-//        return post;
-//    }
+    public void savePost(Post post){
+        postRepository.save(post);
+    }
 
 //}
     public Post createPost(PostCreateRequest request, MultipartFile[] files, User user, MultipartFile fileVideo ) {

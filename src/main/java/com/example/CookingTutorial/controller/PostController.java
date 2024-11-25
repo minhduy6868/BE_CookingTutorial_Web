@@ -236,6 +236,8 @@ public class PostController {
                 .user(user)
                 .build();
 
+        post.getCommentPosts().add(commentPost);
+        postService.savePost(post);
         postService.saveComment(commentPost);
 
         return Response.builder()

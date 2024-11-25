@@ -32,6 +32,11 @@ public class Post {
     @OneToMany(mappedBy = "post")
     List<Ingredient> ingredients;
 
+
+    @OneToMany(mappedBy = "post")
+    @JsonIgnoreProperties("post")
+    List<CommentPost> commentPosts;
+
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("post")
     List<Picture> pictures;

@@ -29,7 +29,7 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {"/user", "/login", "/introspect", "/user/DKUser","/user/forgotPassword"};
 
-    private final String[] PUT_ENDPOINTS = {"/user/updatePass","/user/updateUser","/user/admin/edit/{userId}"};
+    private final String[] PUT_ENDPOINTS = {"/user/updatePass","/user/updateUser","/user/admin/edit/{userId}", "/user/updateAvatar"};
 
     private final String[] DELETE_ENDPOINTS = {"/user/admin/delete/{userId}","/user/admin/deletePost/{postId}"};
 
