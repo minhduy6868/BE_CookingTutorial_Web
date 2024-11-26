@@ -66,6 +66,22 @@ public class PostController {
                 .data(postService.getAllPost())
                 .build();
     }
+    // Admin có thể xóa tất cả các bài viết, chỉ cần truyền ID bài viết vào
+    @DeleteMapping("/deletePost/{postId}")
+    public Response<?> deletePost(@PathVariable("postId") String postId) {
+        boolean isDeleted = postService.deletePostByAdmin(postId);
+        if (isDeleted) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Post deleted successfully.")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Failed to delete post.")
+                    .build();
+        }
+    }
 
 
     // Tìm kiếm bài viết theo title
@@ -181,6 +197,7 @@ public class PostController {
             dislikeRepository.delete(existingDislike.get());
             post.setDislikeCount(post.getDislikeCount() - 1);
 
+            post.getListUserDislike().remove(user);
             postService.updatePost(post);
             return Response.builder()
                     .status(HttpStatus.OK.value())
@@ -195,6 +212,7 @@ public class PostController {
         dislikePost.setPost(post);
         dislikeRepository.save(dislikePost);
 
+        post.getListUserDislike().add(user);
         // Tăng số lượng dislike của bài viết
         post.setDislikeCount(post.getDislikeCount() + 1);
         postService.updatePost(post);

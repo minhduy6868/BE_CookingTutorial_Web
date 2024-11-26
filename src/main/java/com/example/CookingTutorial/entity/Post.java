@@ -29,15 +29,19 @@ public class Post {
     @ElementCollection
     List<User> listUserLike;
 
-    @OneToMany(mappedBy = "post")
+    @ElementCollection
+    List<User> listUserDislike;
+
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Ingredient> ingredients;
 
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("post")
     List<CommentPost> commentPosts;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("post")
     List<Picture> pictures;
 

@@ -174,11 +174,6 @@ public class UserController {
                     .build();
         }
 
-//        return Response.builder()
-//                .status(HttpStatus.OK.value())
-//                .message("Avatar updated successfully!")
-//                .data(userService.updateAvatar(email, avatarUrl))
-//                .build();
     }
 
 
@@ -231,22 +226,7 @@ public class UserController {
                 .build();
     }
 
-    // Admin có thể xóa tất cả các bài viết, chỉ cần truyền ID bài viết vào
-    @DeleteMapping("/admin/deletePost/{postId}")
-    public Response<?> deletePost(@PathVariable("postId") String postId) {
-        boolean isDeleted = postService.deletePost(postId);
-        if (isDeleted) {
-            return Response.builder()
-                    .status(HttpStatus.OK.value())
-                    .message("Post deleted successfully.")
-                    .build();
-        } else {
-            return Response.builder()
-                    .status(HttpStatus.BAD_REQUEST.value())
-                    .message("Failed to delete post.")
-                    .build();
-        }
-    }
+
 
     // Admin lấy số lượng User và bài viết
     @GetMapping("/admin/count")
@@ -264,17 +244,7 @@ public class UserController {
                 .data(data)
                 .build();
     }
-    /*@GetMapping("/admin/count")
-    public Response<?> getAdminStats() {
-        var stats = userService.getAdminStats();
-        return Response.builder()
-                .status(HttpStatus.OK.value())
-                .message("Admin statistics retrieved successfully.")
-                .data(stats)
-                .build();
-    }
 
-     */
 
     // Lấy tất cả người dùng (cho admin)
     @GetMapping("/getAllUser")

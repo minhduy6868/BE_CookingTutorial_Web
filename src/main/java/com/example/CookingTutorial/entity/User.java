@@ -28,7 +28,7 @@ public class User {
     String address;
     Set<String> roles;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("user") // bỏ qua thuộc tính user có trong post
     List<Post> Post;
 }

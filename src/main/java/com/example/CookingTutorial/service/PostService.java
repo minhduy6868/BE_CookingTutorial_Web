@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -38,38 +42,38 @@ public class PostService {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    //file
-    @Value("${fileUpload.rootPath}")
-    private String rootPath;
-    private Path root;
-
-    private void init(){// tạo thư mục nếu có r khỏi tạo
-        try {
-            root= Paths.get(rootPath);
-            if(Files.notExists(root)){
-                Files.createDirectories(root);
-            }
-        }catch (Exception e){
-            System.out.println("Error create folder root: "+ e.getMessage());
-        }
-    }
-
-
     public int numberOfPost(){
         List<Post> list=postRepository.findAll();
         return list.size();
     }
 
-    public boolean deletePost(String postId){
-        if(postRepository.findById(postId).isEmpty()){
+
+    public boolean deletePostByAdmin(String postId){
+
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isEmpty()) {
             return false;
         }
-        postRepository.deleteById(postId);
-        return true;
+        Post post = postOptional.get();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        // Kiểm tra vai trò của người dùng
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+
+        if (isAdmin || post.getUser().getEmail().equals(email)) {
+            postRepository.deleteById(postId);
+            return true;
+        }
+
+        return false;
     }
     public Post getPost(String post_id){
         return postRepository.findById(post_id).orElse(null);
     }
+
 
     public List<Post> getAllPost(){
         return  postRepository.findAll();
@@ -85,7 +89,6 @@ public class PostService {
     }
 
 
-
     // comment post
     public void saveComment(CommentPost comment) {
         commentRepository.save(comment);
@@ -94,6 +97,7 @@ public class PostService {
     public List<CommentPost> getCommentsByPost(Post post) {
         return commentRepository.findByPost(post);
     }
+
 
     public void savePost(Post post){
         postRepository.save(post);

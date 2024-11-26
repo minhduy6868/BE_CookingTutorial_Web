@@ -31,7 +31,7 @@ public class SecurityConfig {
 
     private final String[] PUT_ENDPOINTS = {"/user/updatePass","/user/updateUser","/user/admin/edit/{userId}", "/user/updateAvatar"};
 
-    private final String[] DELETE_ENDPOINTS = {"/user/admin/delete/{userId}","/user/admin/deletePost/{postId}"};
+    private final String[] DELETE_ENDPOINTS = {"/user/admin/delete/{userId}","/post/deletePost/{postId}"};
 
     private final String[] GET_ENDPOINTS = {"/post/{post_id}", "/post/search", "/post/getAllPost","user/info/{userId}","/post/file/{fileName:.+}"};
 

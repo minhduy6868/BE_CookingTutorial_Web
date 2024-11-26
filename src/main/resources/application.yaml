@@ -22,5 +22,3 @@ spring:
 jwt:
   signerKey: "qV6MwxsMykj6Zou1ovsapONCduni7+NQ4I8YTOyITaaED/2CXu4V2XnJ7eiQInSS"
 
-fileUpload:
-  rootPath: C:\Users\HOANGDAT\OneDrive\Máy tính\Spring Boot\uploads
