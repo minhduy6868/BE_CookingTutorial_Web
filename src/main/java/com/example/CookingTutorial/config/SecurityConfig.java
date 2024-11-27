@@ -33,7 +33,7 @@ public class SecurityConfig {
 
     private final String[] DELETE_ENDPOINTS = {"/user/admin/delete/{userId}","/post/deletePost/{postId}"};
 
-    private final String[] GET_ENDPOINTS = {"/post/{post_id}", "/post/search", "/post/getAllPost","user/info/{userId}","/post/file/{fileName:.+}"};
+    private final String[] GET_ENDPOINTS = {"/post/{post_id}", "/post/search", "/post/getAllPost","user/info/{userId}","/post/file/{fileName:.+}","/post/topDislikePost"};
 
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;

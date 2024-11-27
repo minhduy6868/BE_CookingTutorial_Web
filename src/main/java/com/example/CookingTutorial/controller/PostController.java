@@ -125,11 +125,9 @@ public class PostController {
 
         // Kiểm tra nếu người dùng đã like thì hủy like
         Optional<LikePost> existingLike =   likeRepository.findByUserAndPost(user, post);
-        if (existingLike.isPresent()) {
+        if (existingLike.isPresent() ) {
             LikePost likePost = existingLike.get();
             likeRepository.delete(likePost);
-
-            post.getListUserLike().remove(user); // xóa cái user lại lần 2 ra khỏi list
 
             post.setLikeCount(post.getLikeCount() - 1);
             postService.updatePost(post);
@@ -140,6 +138,7 @@ public class PostController {
                     .build();
         }
 
+
         // Tạo mới "like" giữa người dùng và bài viết
         LikePost likePost = new LikePost();
         likePost.setUser(user);
@@ -148,9 +147,7 @@ public class PostController {
 
         // Tăng số lượng like của bài viết
         post.setLikeCount(post.getLikeCount() + 1);
-        post.getListUserLike().add(user);// thêm cái user lại lần 2 ra khỏi list
         postService.updatePost(post);
-
         return Response.builder()
                 .status(HttpStatus.OK.value())
                 .message("Liked the successful!")
@@ -179,25 +176,13 @@ public class PostController {
                     .message("Post not found!")
                     .build();
         }
-//        // Kiểm tra và hủy trạng thái "like" nếu người dùng đang "like"
-//        Optional<LikePost> existingLike = likeRepository.findByUserAndPost(user, post);
-//        if (existingLike.isPresent()) {
-//
-//            likeRepository.delete(existingLike.get());
-//            post.setLikeCount(post.getLikeCount() - 1);
-//            post.getListUserLike().remove(user);
-//
-//            postService.updatePost(post);
-//        }
 
         // Kiểm tra nếu người dùng đã dislike bài viết
         Optional<DislikePost> existingDislike = dislikeRepository.findByUserAndPost(user, post);
         if (existingDislike.isPresent()) {
-            // Hủy dislike
             dislikeRepository.delete(existingDislike.get());
             post.setDislikeCount(post.getDislikeCount() - 1);
 
-            post.getListUserDislike().remove(user);
             postService.updatePost(post);
             return Response.builder()
                     .status(HttpStatus.OK.value())
@@ -212,7 +197,6 @@ public class PostController {
         dislikePost.setPost(post);
         dislikeRepository.save(dislikePost);
 
-        post.getListUserDislike().add(user);
         // Tăng số lượng dislike của bài viết
         post.setDislikeCount(post.getDislikeCount() + 1);
         postService.updatePost(post);
@@ -222,6 +206,11 @@ public class PostController {
                 .message("Dislike post successfully!")
                 .data(post)
                 .build();
+    }
+    //lấy bài viết có lượng dislike cao nhất
+    @GetMapping("/topDislikePost")
+    public List<Post> getTopDislikePosts(@RequestParam("limit") int limit) {
+        return postService.getTopPostsByDislike(limit);
     }
 
     // comment post

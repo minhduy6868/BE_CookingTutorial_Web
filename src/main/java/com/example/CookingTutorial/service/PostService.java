@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -103,7 +104,11 @@ public class PostService {
         postRepository.save(post);
     }
 
-//}
+    // lấy danh sách post có dislike cao
+    public List<Post> getTopPostsByDislike(int limit) {
+        return postRepository.findTopPostsByDislikeCount(limit);
+    }
+    //create post
     public Post createPost(PostCreateRequest request, MultipartFile[] files, User user, MultipartFile fileVideo ) {
 
         Post post = Post.builder()

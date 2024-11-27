@@ -1,5 +1,7 @@
 package com.example.CookingTutorial.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,6 +20,7 @@ public class LikePost {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties("post")
     User user; // Đối tượng User đã like
 
     @ManyToOne

@@ -1,6 +1,7 @@
 package com.example.CookingTutorial.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,11 +27,14 @@ public class Post {
     int dislikeCount=0;
 
 
-    @ElementCollection
-    List<User> listUserLike;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("post")
+    List<LikePost> likePosts;
 
-    @ElementCollection
-    List<User> listUserDislike;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("post")
+    List<DislikePost> dislikePosts;
+
 
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
