@@ -162,11 +162,12 @@ public class UserController {
         String email = authentication.getName();
 
         boolean isUpdateAvatar = userService.updateAvatar(email, avatarUrl);
-
+        User user = userService.findByEmail(email);
         if (isUpdateAvatar) {
             return Response.builder()
                     .status(HttpStatus.OK.value())
                     .message("Update avatar successfully!")
+                    .data(user.getAvatar())
                     .build();
         } else {
             return Response.builder()
