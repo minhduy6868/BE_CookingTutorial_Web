@@ -1,5 +1,6 @@
 package com.example.CookingTutorial.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,9 +25,11 @@ public class CommentPost {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @JsonIgnoreProperties("user")
     Post post;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties("post")
     User user;
 }
