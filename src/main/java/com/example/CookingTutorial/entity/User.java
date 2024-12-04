@@ -29,6 +29,10 @@ public class User {
     Set<String> roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("user") // bỏ qua thuộc tính user có trong post
+    @JsonIgnoreProperties({"user", "likePost"})
+    List<LikePost> likePost;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("user")
     List<Post> Post;
 }

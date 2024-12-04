@@ -2,12 +2,14 @@ package com.example.CookingTutorial.controller;
 
 import com.example.CookingTutorial.dto.request.*;
 import com.example.CookingTutorial.dto.response.Response;
+import com.example.CookingTutorial.entity.Post;
 import com.example.CookingTutorial.entity.User;
 import com.example.CookingTutorial.service.PostService;
 import com.example.CookingTutorial.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -200,6 +202,25 @@ public class UserController {
     }
 
 
+    // lấy danh sách các bài viết  mình đã lưu
+//    @GetMapping
+//    public Response<?> getLikedPosts(){
+//        var authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String email = authentication.getName();
+//
+//        if (userService.getLikedPostsByUserId(email) != null) {
+//            return Response.builder()
+//                    .status(HttpStatus.OK.value())
+//                    .message("User deleted successfully!")
+//
+//                    .build();
+//        } else {
+//            return Response.builder()
+//                    .status(HttpStatus.BAD_REQUEST.value())
+//                    .message("Failed to delete user!")
+//                    .build();
+//        }
+//    }
 
     /// For Admin
 

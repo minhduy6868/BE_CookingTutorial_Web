@@ -2,9 +2,11 @@ package com.example.CookingTutorial.service;
 
 import com.example.CookingTutorial.dto.request.*;
 import com.example.CookingTutorial.dto.response.UserResponse;
+import com.example.CookingTutorial.entity.LikePost;
 import com.example.CookingTutorial.entity.Post;
 import com.example.CookingTutorial.entity.User;
 import com.example.CookingTutorial.enums.Role;
+import com.example.CookingTutorial.repository.LikeRepository;
 import com.example.CookingTutorial.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +36,9 @@ public class UserService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
     //For User
 
@@ -142,6 +147,7 @@ public class UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
                 .roles(user.getRoles())
+                .likePosts(user.getLikePost())
                 .Post(user.getPost())
                 .build();
     }

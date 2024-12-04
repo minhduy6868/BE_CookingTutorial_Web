@@ -21,5 +21,6 @@ public class UserResponse {
     String phoneNumber;
     String address;
     Set<String> roles;
+    List<com.example.CookingTutorial.entity.LikePost> likePosts;
     List<com.example.CookingTutorial.entity.Post> Post;
 }
