@@ -143,4 +143,21 @@ public class PostService {
         return post;
     }
 
+// duyệt bài viết
+    public boolean statusPost(String postId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            post.setApproved(true); // Duyệt bài
+            postRepository.save(post);
+            return true;
+        }
+        return false; // Bài không tồn tại
+    }
+
+    // Lấy danh sách bài chưa được duyệt
+    public List<Post> getUnapprovedPosts() {
+        return postRepository.findByIsApprovedFalse();
+    }
+
 }

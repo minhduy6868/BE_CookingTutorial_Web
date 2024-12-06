@@ -28,6 +28,8 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     String tutorial;
     String typePost;
+    @Column(nullable = false)
+    boolean isApproved = false;
     int likeCount=0;
     int dislikeCount=0;
 

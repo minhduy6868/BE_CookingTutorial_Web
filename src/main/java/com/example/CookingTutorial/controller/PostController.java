@@ -16,6 +16,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -273,7 +274,7 @@ public class PostController {
                 .build();
     }
 
-//    upload file
+//    tạo mới một bài post
     @PostMapping("/createPost")
     public Response<?> createPost(
             @RequestPart("title") String title,
@@ -309,6 +310,35 @@ public class PostController {
                 .status(HttpStatus.CREATED.value())
                 .message("Create post successfully!")
                 .data(post)
+                .build();
+    }
+
+// admin duyệt bai đăng
+@PutMapping("/status/{post_id}")
+@PreAuthorize("hasRole('ADMIN')")
+public Response<?> statusPost(@PathVariable("post_id") String postId) {
+    boolean isApproved = postService.statusPost(postId);
+    if (isApproved) {
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Post approved successfully!")
+                .build();
+    } else {
+        return Response.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message("Post not found!")
+                .build();
+    }
+}
+
+    // Lấy danh sách bài chưa duyệt
+    @GetMapping("/unapproved")
+    public Response<?> getUnapprovedPosts() {
+        List<Post> unapprovedPosts = postService.getUnapprovedPosts();
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get unapproved posts successfully!")
+                .data(unapprovedPosts)
                 .build();
     }
 }

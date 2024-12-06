@@ -21,10 +21,10 @@ public class LikePost {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties({"post", "likePost"})
-    User user; // Đối tượng User đã like
+    User user;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
     @JsonIgnoreProperties("likePosts")
-    Post post; // Đối tượng Post được like
+    Post post;
 }
