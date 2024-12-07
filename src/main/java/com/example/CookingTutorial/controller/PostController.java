@@ -66,6 +66,23 @@ public class PostController {
                 .data(postService.getAllPost())
                 .build();
     }
+
+    @GetMapping("/getPost/{typePost}")
+    public Response<?> getPostByType(@PathVariable("typePost") String typePost){
+
+        if(!postService.getPostByType(typePost).isEmpty()){
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Get post successfully!")
+                    .data(postService.getPostByType(typePost))
+                    .build();
+        }
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get post fail!")
+                .build();
+
+    }
     // Admin có thể xóa tất cả các bài viết, chỉ cần truyền ID bài viết vào
     @DeleteMapping("/deletePost/{postId}")
     public Response<?> deletePost(@PathVariable("postId") String postId) {

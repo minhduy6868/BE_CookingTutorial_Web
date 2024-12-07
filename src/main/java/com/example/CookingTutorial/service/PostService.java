@@ -79,6 +79,9 @@ public class PostService {
     public List<Post> getAllPost(){
         return  postRepository.findAll();
     }
+    public List<Post> getPostByType(String typePost) {
+        return postRepository.findPostByTypePost(typePost);
+    }
 
     public List<Post> searchPostsByTitle(String title) {
         return postRepository.findByTitleContainingIgnoreCase(title);

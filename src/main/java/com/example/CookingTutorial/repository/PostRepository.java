@@ -15,4 +15,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     @Query(value = "SELECT * FROM post ORDER BY dislike_count DESC LIMIT :limit", nativeQuery = true)
     List<Post> findTopPostsByDislikeCount(int limit);
+
+    List<Post> findPostByTypePost(String typePost);
 }
