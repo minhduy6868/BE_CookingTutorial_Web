@@ -19,7 +19,7 @@ public class DislikePost {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties("post")
+    @JsonIgnoreProperties({"post", "likePost"})
     User user;
 
     @ManyToOne

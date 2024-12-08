@@ -138,6 +138,28 @@ public class UserService {
 
         User user = userRepository.findByEmail(name).orElseThrow(()->new RuntimeException("Not find email!"));
 
+
+        List<PostDTO> likedPostDTOs = user.getLikePost().stream()
+                .map(LikePost::getPost) // Lấy bài viết từ LikePost
+                .map(post -> PostDTO.builder()
+                        .id(post.getId())
+                        .linkVideo(post.getLinkVideo())
+                        .title(post.getTitle())
+                        .description(post.getDescription())
+                        .tutorial(post.getTutorial())
+                        .typePost(post.getTypePost())
+                        .likeCount(post.getLikeCount())
+                        .dislikeCount(post.getDislikeCount())
+                        .pictures(post.getPictures().stream()
+                                .map(picture -> PictureDTO.builder()
+                                        .id(picture.getId())
+                                        .alt(picture.getAlt())
+                                        .link(picture.getLink())
+                                        .build())
+                                .toList())
+                        .build())
+                .toList();
+
         return UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -147,7 +169,7 @@ public class UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
                 .roles(user.getRoles())
-                .likePosts(user.getLikePost())
+                .likePosts(likedPostDTOs)
                 .Post(user.getPost())
                 .build();
     }

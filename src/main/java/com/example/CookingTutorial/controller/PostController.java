@@ -224,6 +224,8 @@ public class PostController {
                 .data(post)
                 .build();
     }
+
+
     //lấy bài viết có lượng dislike cao nhất
     @GetMapping("/topDislikePost")
     public List<Post> getTopDislikePosts(@RequestParam("limit") int limit) {

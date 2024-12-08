@@ -53,7 +53,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties("post")
+    @JsonIgnoreProperties({"post", "password", "likePost"})
     User user;
 
 }

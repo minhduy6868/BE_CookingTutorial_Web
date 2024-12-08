@@ -1,6 +1,8 @@
 package com.example.CookingTutorial.dto.response;
 
 
+import com.example.CookingTutorial.dto.request.PostDTO;
+import com.example.CookingTutorial.entity.LikePost;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,6 +23,6 @@ public class UserResponse {
     String phoneNumber;
     String address;
     Set<String> roles;
-    List<com.example.CookingTutorial.entity.LikePost> likePosts;
+    List<PostDTO> likePosts;
     List<com.example.CookingTutorial.entity.Post> Post;
 }
