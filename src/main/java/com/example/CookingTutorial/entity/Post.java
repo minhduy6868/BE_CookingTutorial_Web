@@ -40,11 +40,8 @@ public class Post {
     @JsonIgnoreProperties("post")
     List<DislikePost> dislikePosts;
 
-
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Ingredient> ingredients;
-
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("post")
@@ -53,7 +50,6 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("post")
     List<Picture> pictures;
-
 
     @ManyToOne
     @JoinColumn(name = "user_id")

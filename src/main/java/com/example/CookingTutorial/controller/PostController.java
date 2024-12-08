@@ -67,7 +67,7 @@ public class PostController {
                 .build();
     }
 
-    @GetMapping("/getPost/{typePost}")
+    @GetMapping("/getPostByTypePost/{typePost}")
     public Response<?> getPostByType(@PathVariable("typePost") String typePost){
 
         if(!postService.getPostByType(typePost).isEmpty()){
