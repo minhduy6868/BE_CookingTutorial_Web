@@ -220,8 +220,11 @@ public class PostController {
 
     //lấy bài viết có lượng dislike cao nhất
     @GetMapping("/topDislikePost")
-    public List<Post> getTopDislikePosts(@RequestParam("limit") int limit) {
-        return postService.getTopPostsByDislike(limit);
+    public Response<?> getTopDislikePosts(@RequestParam("limit") int limit) {
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get dislikepost successfully!")
+                .data(postService.getTopPostsByDislike(limit)).build();
     }
 
     // comment post
