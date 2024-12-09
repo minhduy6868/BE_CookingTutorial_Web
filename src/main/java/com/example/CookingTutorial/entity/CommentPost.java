@@ -25,11 +25,11 @@ public class CommentPost {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    @JsonIgnoreProperties("user")
+    @JsonIgnoreProperties({"user", "commentPosts"})
     Post post;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties("post")
+    @JsonIgnoreProperties({"post", "likePost"})
     User user;
 }

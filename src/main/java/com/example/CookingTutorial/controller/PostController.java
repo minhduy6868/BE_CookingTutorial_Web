@@ -262,9 +262,10 @@ public class PostController {
                 .user(user)
                 .build();
 
+
+//        postService.saveComment(commentPost);
         post.getCommentPosts().add(commentPost);
         postService.savePost(post);
-        postService.saveComment(commentPost);
 
         return Response.builder()
                 .status(HttpStatus.CREATED.value())
