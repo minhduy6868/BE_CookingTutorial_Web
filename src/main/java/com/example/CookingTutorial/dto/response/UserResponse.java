@@ -24,5 +24,5 @@ public class UserResponse {
     String address;
     Set<String> roles;
     List<PostDTO> likePosts;
-    List<com.example.CookingTutorial.entity.Post> Post;
+    List<PostDTO> Post;
 }

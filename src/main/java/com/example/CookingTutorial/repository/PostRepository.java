@@ -17,4 +17,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
     List<Post> findTopPostsByDislikeCount(int limit);
 
     List<Post> findPostByTypePost(String typePost);
+    List<Post> findByIsApprovedFalse();
+
 }

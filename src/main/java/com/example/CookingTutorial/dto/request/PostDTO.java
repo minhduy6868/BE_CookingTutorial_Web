@@ -22,7 +22,7 @@ public class PostDTO {
     int likeCount;
     int dislikeCount;
 
-
+    private boolean isApproved;
     List<LikePost> likePosts;
     List<DislikePost> dislikePosts;
     List<Ingredient> ingredients;

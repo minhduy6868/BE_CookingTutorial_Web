@@ -76,7 +76,6 @@ public class UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
                 .roles(user.getRoles())
-                .Post(user.getPost())
                 .build();
     }
 
@@ -139,8 +138,41 @@ public class UserService {
         User user = userRepository.findByEmail(name).orElseThrow(()->new RuntimeException("Not find email!"));
 
 
-        List<PostDTO> likedPostDTOs = user.getLikePost().stream()
-                .map(LikePost::getPost) // Lấy bài viết từ LikePost
+//        List<PostDTO> likedPostDTOs = user.getLikePost().stream()
+//                .map(LikePost::getPost) // Lấy bài viết từ LikePost
+//                .map(post -> PostDTO.builder()
+//                        .id(post.getId())
+//                        .linkVideo(post.getLinkVideo())
+//                        .title(post.getTitle())
+//                        .description(post.getDescription())
+//                        .tutorial(post.getTutorial())
+//                        .typePost(post.getTypePost())
+//                        .likeCount(post.getLikeCount())
+//                        .dislikeCount(post.getDislikeCount())
+//                        .pictures(post.getPictures().stream()
+//                                .map(picture -> PictureDTO.builder()
+//                                        .id(picture.getId())
+//                                        .alt(picture.getAlt())
+//                                        .link(picture.getLink())
+//                                        .build())
+//                                .toList())
+//                        .build())
+//                .toList();
+
+//        return UserResponse.builder()
+//                .id(user.getId())
+//                .email(user.getEmail())
+//                .fullName(user.getFullName())
+//                .avatar(user.getAvatar())
+//                .description(user.getDescription())
+//                .phoneNumber(user.getPhoneNumber())
+//                .address(user.getAddress())
+//                .roles(user.getRoles())
+//                .likePosts(likedPostDTOs)
+//                .Post(user.getPost())
+//                .build();
+        // Lấy tất cả bài viết của người dùng
+        List<PostDTO> myPosts = user.getPost().stream()
                 .map(post -> PostDTO.builder()
                         .id(post.getId())
                         .linkVideo(post.getLinkVideo())
@@ -150,6 +182,7 @@ public class UserService {
                         .typePost(post.getTypePost())
                         .likeCount(post.getLikeCount())
                         .dislikeCount(post.getDislikeCount())
+                        .isApproved(post.isApproved()) // Trạng thái duyệt bài
                         .pictures(post.getPictures().stream()
                                 .map(picture -> PictureDTO.builder()
                                         .id(picture.getId())
@@ -169,12 +202,51 @@ public class UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
                 .roles(user.getRoles())
-                .likePosts(likedPostDTOs)
-                .Post(user.getPost())
+                .likePosts(user.getLikePost().stream()
+                        .map(LikePost::getPost)
+                        .map(post -> PostDTO.builder()
+                                .id(post.getId())
+                                .title(post.getTitle())
+                                .build())
+                        .toList())
+                .Post(myPosts)
                 .build();
     }
-    public UserResponse getInfo(String userId){
+    public UserResponse getInfo(String userId){ // nguười khác xem info của ta
         User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("Not find user!"));
+        // Chỉ lấy các bài viết đã duyệt
+        List<PostDTO> approvedPosts = user.getPost().stream()
+                .filter(Post::isApproved) // Lọc bài viết đã duyệt
+                .map(post -> PostDTO.builder()
+                        .id(post.getId())
+                        .linkVideo(post.getLinkVideo())
+                        .title(post.getTitle())
+                        .description(post.getDescription())
+                        .tutorial(post.getTutorial())
+                        .typePost(post.getTypePost())
+                        .likeCount(post.getLikeCount())
+                        .dislikeCount(post.getDislikeCount())
+                        .isApproved(post.isApproved()) // Trạng thái duyệt bài
+                        .pictures(post.getPictures().stream()
+                                .map(picture -> PictureDTO.builder()
+                                        .id(picture.getId())
+                                        .alt(picture.getAlt())
+                                        .link(picture.getLink())
+                                        .build())
+                                .toList())
+                        .build())
+                .toList();
+//        return UserResponse.builder()
+//                .id(user.getId())
+//                .email(user.getEmail())
+//                .fullName(user.getFullName())
+//                .avatar(user.getAvatar())
+//                .description(user.getDescription())
+//                .phoneNumber(user.getPhoneNumber())
+//                .address(user.getAddress())
+//                .roles(user.getRoles())
+//                .Post(user.getPost())
+//                .build();
         return UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -184,7 +256,7 @@ public class UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
                 .roles(user.getRoles())
-                .Post(user.getPost())
+                .Post(approvedPosts)
                 .build();
     }
 

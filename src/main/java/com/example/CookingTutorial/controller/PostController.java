@@ -16,6 +16,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,15 +56,6 @@ public class PostController {
                 .status(HttpStatus.OK.value())
                 .message("Get post successfully!")
                 .data(post)
-                .build();
-    }
-
-    @GetMapping("/getAllPost")
-    public Response<?> getAllPost(){
-        return Response.builder()
-                .status(HttpStatus.OK.value())
-                .message("Get all post successfully!")
-                .data(postService.getAllPost())
                 .build();
     }
 
@@ -293,7 +285,7 @@ public class PostController {
                 .build();
     }
 
-//    upload file
+//    tạo mới một bài post
     @PostMapping("/createPost")
     public Response<?> createPost(
             @RequestPart("title") String title,
@@ -331,4 +323,51 @@ public class PostController {
                 .data(post)
                 .build();
     }
+
+    // admin duyệt bai đăng
+    @PutMapping("/status/{post_id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Response<?> statusPost(@PathVariable("post_id") String postId) {
+        boolean isApproved = postService.statusPost(postId);
+        if (isApproved) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Post approved successfully!")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .message("Post not found!")
+                    .build();
+        }
+    }
+
+    @GetMapping("/getAllPost") // lấy tất cả bài viết kể cả đã duyệt và chưa
+    public Response<?> getAllPost(){
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all post successfully!")
+                .data(postService.getAllPost())
+                .build();
+    }
+    @GetMapping("/getAllPostWasApproved") // lấy các bài viết đã được duyệt
+    public Response<?> getAllPostWasApproved(){
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all post was approved successfully!")
+                .data(postService.getAllPostApproved())
+                .build();
+    }
+
+    // Lấy các bài chưa duyệt
+    @GetMapping("/unapproved")
+    public Response<?> getUnapprovedPosts() {
+        List<Post> unapprovedPosts = postService.getAllPostUnapprovedPosts();
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get unapproved posts successfully!")
+                .data(unapprovedPosts)
+                .build();
+    }
+
 }

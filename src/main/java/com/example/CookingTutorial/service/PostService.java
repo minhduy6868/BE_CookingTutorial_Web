@@ -76,9 +76,7 @@ public class PostService {
     }
 
 
-    public List<Post> getAllPost(){
-        return  postRepository.findAll();
-    }
+
     public List<Post> getPostByType(String typePost) {
         return postRepository.findPostByTypePost(typePost);
     }
@@ -144,6 +142,30 @@ public class PostService {
         pictureRepository.saveAll(pictures);
 
         return post;
+    }
+
+// duyệt bài viết
+    public boolean statusPost(String postId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            post.setApproved(true); // Duyệt bài
+            postRepository.save(post);
+            return true;
+        }
+        return false; // Bài không tồn tại
+    }
+
+    public List<Post> getAllPost(){
+        return  postRepository.findAll();
+    }
+    // Lấy các bài viết đã duyệt
+    public List<Post> getAllPostApproved(){
+        return  postRepository.findAll().stream().filter(Post::isApproved).toList();
+    }
+    // Lấy danh sách bài chưa được duyệt
+    public List<Post> getAllPostUnapprovedPosts() {
+        return postRepository.findByIsApprovedFalse();
     }
 
 }
