@@ -21,5 +21,5 @@ spring:
     show-sql: true
 jwt:
   signerKey: "qV6MwxsMykj6Zou1ovsapONCduni7+NQ4I8YTOyITaaED/2CXu4V2XnJ7eiQInSS"
-  cloudySecret: "4Yct2Y7U64h2DlUbtEm0ctRvhIM"
+  cloudySecret: "066Vbfp6rEVB_lnxrtO_PFFRVmo"
 
