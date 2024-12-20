@@ -48,6 +48,10 @@ public class UserService {
         user.setFullName(request.getFullName());
         user.setPassword(new BCryptPasswordEncoder(10).encode(request.getPassword()));
 
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
+
         userRepository.save(user);
         return "Register successfull!";
     }
@@ -206,7 +210,21 @@ public class UserService {
                         .map(LikePost::getPost)
                         .map(post -> PostDTO.builder()
                                 .id(post.getId())
+                                .linkVideo(post.getLinkVideo())
                                 .title(post.getTitle())
+                                .description(post.getDescription())
+                                .tutorial(post.getTutorial())
+                                .typePost(post.getTypePost())
+                                .likeCount(post.getLikeCount())
+                                .dislikeCount(post.getDislikeCount())
+                                .ingredients(post.getIngredients())
+                                .pictures(post.getPictures().stream()
+                                        .map(picture -> PictureDTO.builder()
+                                                .id(picture.getId())
+                                                .alt(picture.getAlt())
+                                                .link(picture.getLink())
+                                                .build())
+                                        .toList())
                                 .build())
                         .toList())
                 .Post(myPosts)

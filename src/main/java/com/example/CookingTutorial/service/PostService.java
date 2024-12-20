@@ -1,30 +1,19 @@
 package com.example.CookingTutorial.service;
 
 import com.example.CookingTutorial.dto.request.PostCreateRequest;
-import com.example.CookingTutorial.entity.CommentPost;
-import com.example.CookingTutorial.entity.Picture;
-import com.example.CookingTutorial.entity.Post;
-import com.example.CookingTutorial.entity.User;
+import com.example.CookingTutorial.entity.*;
 import com.example.CookingTutorial.repository.*;
+import com.example.CookingTutorial.reponsitory.IngredientRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.file.ConfigurationSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -40,6 +29,8 @@ public class PostService {
     private UserRepository userRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private IngredientRepository ingredientRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
 
@@ -121,6 +112,25 @@ public class PostService {
                 .build();
 
 
+        if (request.getIngredients() != null && !request.getIngredients().isEmpty()) {
+            String[] lines = request.getIngredients().split("\n");
+            List<Ingredient> ingredients = new ArrayList<>();
+            for (String line : lines) {
+                String[] parts = line.split("-");
+                if (parts.length == 2) {
+                    String name = parts[0].trim();
+                    String quantity = parts[1].trim();
+                    Ingredient ingredient = Ingredient.builder()
+                            .ingredientName(name)
+                            .quantity(quantity)
+                            .post(post)
+                            .build();
+                    ingredients.add(ingredient);
+                }
+            }
+            post.setIngredients(ingredients);
+        }
+        // xử lý ảnh
         List<Picture> pictures = new ArrayList<>();
         for (int i = 0; i < files.length; i++) {
             MultipartFile file = files[i];

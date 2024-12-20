@@ -15,4 +15,5 @@ public class PostCreateRequest {
     String description;
     String tutorial;
     String typePost;
+    String ingredients;
 }

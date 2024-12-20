@@ -7,15 +7,10 @@ import com.example.CookingTutorial.repository.DislikeRepository;
 import com.example.CookingTutorial.repository.LikeRepository;
 import com.example.CookingTutorial.service.PostService;
 import com.example.CookingTutorial.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.protocol.ResponseDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -296,7 +291,8 @@ public class PostController {
             @RequestPart("tutorial") String tutorial,
             @RequestPart("typePost") String typePost,
             @RequestPart("images") MultipartFile[] files,
-            @RequestPart("fileVideo") MultipartFile fileVideo
+            @RequestPart("fileVideo") MultipartFile fileVideo,
+            @RequestPart("ingredient") String ingredient
     ) {
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -316,7 +312,7 @@ public class PostController {
         postRequest.setTypePost(typePost);
         postRequest.setTitle(title);
         postRequest.setTutorial(tutorial);
-
+        postRequest.setIngredients(ingredient);
 
         Post post = postService.createPost(postRequest, files, user, fileVideo);
 
