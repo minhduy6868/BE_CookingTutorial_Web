@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -244,13 +245,15 @@ public class PostController {
                     .build();
         }
 
+
         // lưu comment do user đăng và lưu vào post
         CommentPost commentPost = CommentPost.builder()
                 .content(content)
-                .createdAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
                 .post(post)
                 .user(user)
                 .build();
+
 
 
 //        postService.saveComment(commentPost);

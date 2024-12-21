@@ -21,7 +21,8 @@ public class CommentPost {
 
     String content;
 
-    LocalDateTime createdAt;
+
+    String createdAt;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -32,4 +33,6 @@ public class CommentPost {
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties({"post", "likePost"})
     User user;
+
+
 }

@@ -10,15 +10,14 @@ import java.util.Map;
 
 @Controller
 public class SurveyController {
-    @MessageMapping("/sendMessage") // Nhận message từ client với prefix /app/sendMessage
-    @SendTo("/topic/messages") // Gửi message tới tất cả các client lắng nghe tại /topic/messages
-    public String sendMessage(String message) {
-        return message; // Trả lại message nhận được
-    }
+
     private final Map<String, Integer> votes = new HashMap<>() {{
-        put("apple", 0);
-        put("banana", 0);
-        put("orange", 0);
+        put("món ăn chính", 0);
+        put("ăn kèm", 0);
+        put("tráng miệng", 0);
+        put("ăn nhẹ", 0);
+        put("đồ uống", 0);
+        put("ăn vặt", 0);
     }};
 
     @MessageMapping("/vote") // Xử lý khi client gửi đến /app/vote
