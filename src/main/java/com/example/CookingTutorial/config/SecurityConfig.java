@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE,DELETE_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, GET_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/admin/count","/user/getAllUser","/post/{post_id}","/post/search","user/info/{userId}","/post/file/{fileName:.+}").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()
         );
 
@@ -88,6 +89,7 @@ public class SecurityConfig {
     // Cấu hình CORS
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
         corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173")); // Thêm URL frontend của bạn
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("Content-Type", "Authorization", "*"));
