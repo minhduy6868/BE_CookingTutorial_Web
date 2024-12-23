@@ -14,6 +14,7 @@ import java.util.Map;
 public class SurveyController {
 
     private final Map<String, Integer> votes = new HashMap<>() {{
+<<<<<<< HEAD
         put("Món ăn chính", 0);
         put("Ăn kèm", 0);
         put("Tráng miệng", 0);
@@ -21,6 +22,15 @@ public class SurveyController {
         put("Đồ uống", 0);
         put("Ăn vặt", 0);
         put("Khác", 0);
+=======
+        put("món ăn chính", 0);
+        put("ăn kèm", 0);
+        put("tráng miệng", 0);
+        put("ăn nhẹ", 0);
+        put("đồ uống", 0);
+        put("ăn vặt", 0);
+        put("khác", 0);
+>>>>>>> 61116b2d591dbd724a3dc133c04c5f5c65e3551e
     }};
 
     @MessageMapping("/vote") // Xử lý khi client gửi đến /app/vote
@@ -34,6 +44,7 @@ public class SurveyController {
         for (Map.Entry<String, Integer> entry : votes.entrySet()) {
             percentages.put(entry.getKey(), (entry.getValue() * 100.0) / totalVotes);
         }
+
         return percentages;
     }
 }

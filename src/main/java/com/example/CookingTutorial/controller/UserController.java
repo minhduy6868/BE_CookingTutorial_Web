@@ -2,14 +2,12 @@ package com.example.CookingTutorial.controller;
 
 import com.example.CookingTutorial.dto.request.*;
 import com.example.CookingTutorial.dto.response.Response;
-import com.example.CookingTutorial.entity.Post;
 import com.example.CookingTutorial.entity.User;
 import com.example.CookingTutorial.service.PostService;
 import com.example.CookingTutorial.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +29,7 @@ public class UserController {
 
     /// For User
 
-    @PostMapping // Tạo mới 1 user
+    @PostMapping
     public Response<?> createUser(@RequestBody UserCreateRequest request) {
         if (userService.checkEmail(request.getEmail())){
             return Response.builder()
@@ -47,7 +45,7 @@ public class UserController {
 
     }
 
-    @GetMapping // Lấy tất cả người dùng
+    @GetMapping
     public Response<?> getUsers() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -61,7 +59,7 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/{userId}") // Lấy thông tin người dùng theo ID
+    @GetMapping("/{userId}")
     public Response<?> getUser(@PathVariable("userId") String userId) {
         return Response.builder()
                 .status(HttpStatus.OK.value())
@@ -70,7 +68,7 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/myInfo") // Lấy thông tin của người dùng hiện tại
+    @GetMapping("/myInfo")
     public Response<?> getMyInfo() {
         return Response.builder()
                 .status(HttpStatus.OK.value())
@@ -78,7 +76,7 @@ public class UserController {
                 .data(userService.getMyInfo())
                 .build();
     }
-    @GetMapping("/info/{userId}") // Lấy thông tin của người khác dùng khi click vào
+    @GetMapping("/info/{userId}")
     public Response<?> getInfo(@PathVariable("userId") String userId) {
         return Response.builder()
                 .status(HttpStatus.OK.value())
@@ -87,7 +85,7 @@ public class UserController {
                 .build();
     }
 
-    // Đăng ký tài khoản
+
     @PostMapping("/DKUser")
     public Response<?> DKUser(@RequestBody DKRequest request) {
         if(userService.checkEmail(request.getEmail())){
