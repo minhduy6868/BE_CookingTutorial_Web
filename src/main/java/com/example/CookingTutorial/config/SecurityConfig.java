@@ -90,13 +90,13 @@ public class SecurityConfig {
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173")); // Thêm URL frontend của bạn
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("Content-Type", "Authorization", "*"));
-        corsConfiguration.setAllowCredentials(true);  // Nếu frontend cần gửi cookies hoặc thông tin đăng nhập
+        corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);  // Áp dụng cho tất cả các endpoint
+        source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
 }

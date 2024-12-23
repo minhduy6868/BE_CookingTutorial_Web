@@ -88,8 +88,6 @@ public class PostController {
         }
     }
 
-
-    // Tìm kiếm bài viết theo title
     @GetMapping("/search")
     public Response<?> searchPostsByTitle(@RequestParam("title") String title) {
         List<Post> posts = postService.searchPostsByTitle(title);
@@ -143,14 +141,11 @@ public class PostController {
                     .build();
         }
 
-
-        // Tạo mới "like" giữa người dùng và bài viết
         LikePost likePost = new LikePost();
         likePost.setUser(user);
         likePost.setPost(post);
         likeRepository.save(likePost);
 
-        // Tăng số lượng like của bài viết
         post.setLikeCount(post.getLikeCount() + 1);
         postService.updatePost(post);
         return Response.builder()
@@ -160,7 +155,6 @@ public class PostController {
                 .build();
     }
 
-    //dislike post
     @PostMapping("/dislike/{post_id}")
     public Response<?> dislikePost(@PathVariable("post_id") String postId) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -196,13 +190,11 @@ public class PostController {
                     .build();
         }
 
-        // Tạo mới dislike
         DislikePost dislikePost = new DislikePost();
         dislikePost.setUser(user);
         dislikePost.setPost(post);
         dislikeRepository.save(dislikePost);
 
-        // Tăng số lượng dislike của bài viết
         post.setDislikeCount(post.getDislikeCount() + 1);
         postService.updatePost(post);
 
@@ -214,7 +206,6 @@ public class PostController {
     }
 
 
-    //lấy bài viết có lượng dislike cao nhất
     @GetMapping("/topDislikePost")
     public Response<?> getTopDislikePosts(@RequestParam("limit") int limit) {
         return Response.builder()
@@ -245,8 +236,6 @@ public class PostController {
                     .build();
         }
 
-
-        // lưu comment do user đăng và lưu vào post
         CommentPost commentPost = CommentPost.builder()
                 .content(content)
                 .createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
@@ -254,9 +243,6 @@ public class PostController {
                 .user(user)
                 .build();
 
-
-
-//        postService.saveComment(commentPost);
         post.getCommentPosts().add(commentPost);
         postService.savePost(post);
 
@@ -267,7 +253,7 @@ public class PostController {
                 .build();
     }
 
-    //Lấy danh sách bình luận theo bài viết
+
     @GetMapping("/comment/{post_id}")
     public Response<?> getComments(@PathVariable("post_id") String postId) {
         Post post = postService.getPost(postId);
@@ -344,7 +330,7 @@ public class PostController {
         }
     }
 
-    @GetMapping("/getAllPost") // lấy tất cả bài viết kể cả đã duyệt và chưa
+    @GetMapping("/getAllPost")
     public Response<?> getAllPost(){
         return Response.builder()
                 .status(HttpStatus.OK.value())
@@ -352,7 +338,7 @@ public class PostController {
                 .data(postService.getAllPost())
                 .build();
     }
-    @GetMapping("/getAllPostWasApproved") // lấy các bài viết đã được duyệt
+    @GetMapping("/getAllPostWasApproved")
     public Response<?> getAllPostWasApproved(){
         return Response.builder()
                 .status(HttpStatus.OK.value())
@@ -361,7 +347,7 @@ public class PostController {
                 .build();
     }
 
-    // Lấy các bài chưa duyệt
+
     @GetMapping("/unapproved")
     public Response<?> getUnapprovedPosts() {
         List<Post> unapprovedPosts = postService.getAllPostUnapprovedPosts();

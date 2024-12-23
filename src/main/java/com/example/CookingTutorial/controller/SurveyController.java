@@ -18,6 +18,7 @@ public class SurveyController {
         put("ăn nhẹ", 0);
         put("đồ uống", 0);
         put("ăn vặt", 0);
+        put("khác", 0);
     }};
 
     @MessageMapping("/vote") // Xử lý khi client gửi đến /app/vote
@@ -31,6 +32,7 @@ public class SurveyController {
         for (Map.Entry<String, Integer> entry : votes.entrySet()) {
             percentages.put(entry.getKey(), (entry.getValue() * 100.0) / totalVotes);
         }
+
         return percentages;
     }
 }
