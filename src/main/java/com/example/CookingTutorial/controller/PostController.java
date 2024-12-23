@@ -223,6 +223,15 @@ public class PostController {
                 .data(postService.getTopPostsByDislike(limit)).build();
     }
 
+    //lấy bài viết có lượng dislike cao nhất
+    @GetMapping("/topLikePost")
+    public Response<?> getTopLikePosts(@RequestParam("limit") int limit) {
+        return Response.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get dislikepost successfully!")
+                .data(postService.getTopPostsByLike(limit)).build();
+    }
+
     // comment post
     @PostMapping("/comment/{post_id}")
     public Response<?> addComment(@PathVariable("post_id") String postId, @RequestBody String content) {

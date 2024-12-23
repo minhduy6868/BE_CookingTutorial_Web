@@ -100,6 +100,11 @@ public class PostService {
     public List<Post> getTopPostsByDislike(int limit) {
         return postRepository.findTopPostsByDislikeCount(limit);
     }
+    // lấy danh sách post có like cao
+    public List<Post> getTopPostsByLike(int limit) {
+        return postRepository.findTopPostsByLikeCount(limit);
+    }
+
     //create post
     public Post createPost(PostCreateRequest request, MultipartFile[] files, User user, MultipartFile fileVideo ) {
 
