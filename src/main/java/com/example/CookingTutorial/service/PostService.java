@@ -62,6 +62,24 @@ public class PostService {
 
         return false;
     }
+
+    public boolean deletePost(String postId){
+
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isEmpty()) {
+            return false;
+        }
+        Post post = postOptional.get();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+            try {
+                postRepository.deleteById(postId);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+    }
+
     public Post getPost(String post_id){
         return postRepository.findById(post_id).orElse(null);
     }
@@ -69,7 +87,7 @@ public class PostService {
 
 
     public List<Post> getPostByType(String typePost) {
-        return postRepository.findPostByTypePost(typePost);
+        return postRepository.findPostByTypePost(typePost).stream().filter(Post::isApproved).toList();
     }
 
     public List<Post> searchPostsByTitle(String title) {

@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: "mysql://mysql.railway.internal:39896:3306/railway"
+    url: "jdbc:mysql://127.0.0.1:3306/cookingTutorialData"
     username: root
-    password: yjbkkGaabflPmsUTbtADIhdpTnHxuUmP
+    password: root
   mail:
     host: smtp.gmail.com
     port: 587
-    username: datcute279@gmail.com
-    password: lyexpuxldyjdihhr
+    username: thambtl.23it@vku.udn.vn
+    password: vpeyqhvvmffvouho
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true

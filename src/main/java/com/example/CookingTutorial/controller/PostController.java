@@ -88,6 +88,22 @@ public class PostController {
         }
     }
 
+    @DeleteMapping("/deletePostMe/{postId}")
+    public Response<?> deletePostMe(@PathVariable("postId") String postId) {
+        boolean isDeleted = postService.deletePost(postId);
+        if (isDeleted) {
+            return Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("Post deleted successfully.")
+                    .build();
+        } else {
+            return Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Failed to delete post.")
+                    .build();
+        }
+    }
+
     @GetMapping("/search")
     public Response<?> searchPostsByTitle(@RequestParam("title") String title) {
         List<Post> posts = postService.searchPostsByTitle(title);
